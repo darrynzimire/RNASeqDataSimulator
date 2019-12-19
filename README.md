@@ -1,4 +1,7 @@
 # RNASeqDataSimulator
 
 RNASeqDataSimulator is a command-line tool written in the Python programming language. 
-This tool take as input a Reference transcript Fasta File and a set of parameters such as the number of sequences to simulate as well as the desired read length and creates synthetic RNA-seq data in FastQ format
+Its goal is to use publicly available 'real' RNA-sequencing data to build models and extract the statistical characteristics
+of the data.The models can then be used to generate synthetic RNA-sequencing data that resembles that of real RNA-seq data. 
+
+The simulator provides a set of tunable parameters that can help to produce sequencing data with various characteristics.
