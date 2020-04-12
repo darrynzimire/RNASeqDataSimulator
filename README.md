@@ -1,26 +1,88 @@
+# Project Title
 
-# RSDS- A command-line tool for simulating raw RNA-sequencing data 
+One Paragraph of project description goes here
 
+## Getting Started
 
-# Synopsis
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
+### Prerequisites
 
-# Description
-The RNA-seq data simulator described in this study was developed as a command-line interface implemented in Python 3. The tool simulates raw RNA-sequencing data. It takes as input an annotated reference transcript nucleotide sequence file in FASTA format from which reads are simulated. RSDS extracts individual transcript sequences from an index at random in default mode.  The only required arguments are: a user-defined read length, desired number of reads to simulate, library type (single-end or paired-end) and an output file prefix. The simulated RNA-seq reads are written to disk in a FASTQ formatted file with .fastq as file extension. Other parameters to control the properties of the simulated data are available as tuneable settings such as fragment-length distribution, customized Phred-quality score modelling, customized transcript expression profiling, as well as differential transcript expression simulation. 
+What things you need to install the software and how to install them
 
-# Requirements
+```
+Give examples
+```
 
-Python version 3
-Numpy
-Pyfaidx
+### Installing
 
-# Usage
+A step by step series of examples that tell you how to get a development env running
 
+Say what the step will be
 
-The options for the program is as follows:
+```
+Give the example
+```
 
--h --help                           Print the help file and exit
--v --version                        Print the version of the program and exit
--o                                  Prefix for the output files created
--f                                  Reference genome file in FASTA format
--R                                  The desired read length 
+And repeat
+
+```
+until finished
+```
+
+End with an example of getting some data out of the system or using it for a little demo
+
+## Running the tests
+
+Explain how to run the automated tests for this system
+
+### Break down into end to end tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+### And coding style tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+## Deployment
+
+Add additional notes about how to deploy this on a live system
+
+## Built With
+
+* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
+* [Maven](https://maven.apache.org/) - Dependency Management
+* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+
+## Authors
+
+* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+
+See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+* Hat tip to anyone whose code was used
+* Inspiration
+* etc
+
