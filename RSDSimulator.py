@@ -137,7 +137,6 @@ def parseIndexRef(indexFile):
     fai.close()
     return ref_inds
 
-
 def samplingtranscripts(ids):
     """"
     Description: This function randomly sample from all reference transcripts
