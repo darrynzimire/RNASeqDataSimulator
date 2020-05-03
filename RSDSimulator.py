@@ -64,7 +64,10 @@ np.random.seed(SEED)
 NB = np.round(sp.random.negative_binomial(n=1, p=0.1, size=10000))
 NB_model = [1 if x == 0 else x for x in NB]
 
+print('reading reference file: ' + str(ref) + "\n")
+
 pyfaidx.Faidx(ref)
+print('Indexing reference file....' + "\n")
 
 # Search current directory for index file and read into programme
 indexFile = ''
@@ -283,6 +286,10 @@ def main():
         Seq = []
 
         if single == True and countModel == None:
+            print('Simulating single-end reads....' + "\n")
+            print('No transcript profile model detected!!'+ "\n")
+            print('Simulating default transcript profile' + "\n")
+
             counts = np.random.choice(NB_model, size=readtot, replace=True).tolist()
 
             scaled_counts = scalereadnum(counts, readtot)
@@ -293,6 +300,9 @@ def main():
             COUNTS.append(scaled_counts)
 
         elif single == True and countModel != None:
+            print('Simulating single-end reads' + "\n")
+            print('Detected transcript profile model.....' + "\n")
+            print('Simulating empirical transcript profile' + "\n")
             counts_s = scalereadnum(count_table, readtot)
             samptransids = random.choices(ref_transcript_ids, k=len(counts_s))
 
@@ -318,19 +328,14 @@ def main():
                 qdata = sample_qualscore(sequencingModel=sqmodel)
                 reads.append(read)
                 quality_strings.append(qdata)
-
-
-        print('number of counts ' + str(len(COUNTS[0])))
-        print('reads ' + str(len(reads)))
-        print('quality strings ' + str(len(quality_strings)))
-        print('transcript ids ' + str(len(ID)))
-
-
+                
+        print('writing reads to output file...' + "\n")
         with gzip.open(output + '.fastq.gz', 'w') as handle:
             for id, read, q in zip(ID, reads, quality_strings):
                 handle.write('{}\n{}\n+\n{}\n'.format(id, read, q).encode())
 
-
+        print('Simulation process completed ')
+        
     elif PE != None:
 
 
@@ -344,10 +349,16 @@ def main():
         Fragments = []
 
         if paired == True and countModel == None:
+            print('Generating paired-end reads.....' + "\n")
+            print('Sampling counts from negative binomial model' + "\n")
+
             counts_NB = np.random.choice(NB_model, size=readtot, replace=True).tolist()
             counts_p = scalereadnum(counts_NB, readtot)
             COUNTS_P.append(counts_p)
         elif paired == True and countModel != None:
+            print('Generating paired-end reads' + "\n")
+            print('Simulating empirical transcript profile.....' + "\n")
+
             counts_p = scalereadnum(count_table, readtot)
             COUNTS_P.append(counts_p)
 
@@ -383,18 +394,14 @@ def main():
             read2 = i[-readlen:]
             R1.append(read1)
             R2.append(read2)
-        print('number of fragments ' + str(len(Fragments)))
-        print('number of counts ' + str(len(COUNTS_P[0])))
-        print('read1 ' + str(len(R1)))
-        print('read2 ' + str(len(R2)))
-        print('quality strings ' + str(len(quality_strings)))
-        print('transcript ids ' + str(len(ID)))
-
+      
+        
+        print('writing reads to output file' + "\n")
         with gzip.open(output +'_R1.fastq.gz', 'wb') as f1, gzip.open(output + '_R2.fastq.gz', 'wb') as f2:
             for id, reads1, reads2, q in zip(ID, R1, R2, quality_strings):
                 f1.write('{}\n{}\n+\n{}\n'.format(id, reads1, q).encode())
                 f2.write('{}\n{}\n+\n{}\n'.format(id, reads2, q).encode())
-
+        print('Simulation completed ')
 
 if __name__ == '__main__':
     main()
