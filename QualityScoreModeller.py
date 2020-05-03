@@ -97,70 +97,6 @@ def parseFQ(inf):
 		for j in range(RQ):
 			initQ[i][j] = (priorQ[i][j]+INIT_SMOOTH)/rowSum
 
-	if PLOT_STUFF:
-		mpl.rcParams.update({'font.size': 14, 'font.weight':'bold', 'lines.linewidth': 3})
-
-		mpl.figure(1)
-		Z = np.array(initQ).T
-		X, Y = np.meshgrid( list(range(0,len(Z[0])+1)), list(range(0,len(Z)+1)) )
-		mpl.pcolormesh(X,Y,Z,vmin=0.,vmax=0.25)
-		mpl.axis([0,len(Z[0]),0,len(Z)])
-		mpl.yticks(list(range(0,len(Z),10)),list(range(0,len(Z),10)))
-		mpl.xticks(list(range(0,len(Z[0]),10)),list(range(0,len(Z[0]),10)))
-		mpl.xlabel('Read Position')
-		mpl.ylabel('Quality Score')
-		mpl.title('Q-Score Prior Probabilities')
-		mpl.colorbar()
-
-		mpl.show()
-
-		VMIN_LOG = [-4,0]
-		minVal   = 10**VMIN_LOG[0]
-		qLabels  = [str(n) for n in range(QRANGE[0],QRANGE[1]+1) if n%5==0]
-		print(qLabels)
-		qTicksx  = [int(n)+0.5 for n in qLabels]
-		qTicksy  = [(RQ-int(n))-0.5 for n in qLabels]
-
-		for p in range(1,actual_readlen,10):
-			currentDat = np.array(probQ[p])
-			for i in range(len(currentDat)):
-				for j in range(len(currentDat[i])):
-					currentDat[i][j] = max(minVal,currentDat[i][j])
-
-			# matrix indices:		pcolormesh plotting:	plot labels and axes:
-			#
-			#      y				   ^					   ^
-			#	   -->				 x |					 y |
-			#  x |					    -->					    -->
-			#    v 					    y					    x
-			#
-			# to plot a MxN matrix 'Z' with rowNames and colNames we need to:
-			#
-			# pcolormesh(X,Y,Z[::-1,:])		# invert x-axis
-			# # swap x/y axis parameters and labels, remember x is still inverted:
-			# xlim([yMin,yMax])
-			# ylim([M-xMax,M-xMin])
-			# xticks()
-			#
-
-			mpl.figure(p+1)
-			Z = np.log10(currentDat)
-			X, Y = np.meshgrid( list(range(0,len(Z[0])+1)), list(range(0,len(Z)+1)) )
-			mpl.pcolormesh(X,Y,Z[::-1,:],vmin=VMIN_LOG[0],vmax=VMIN_LOG[1],cmap='jet')
-			mpl.xlim([QRANGE[0],QRANGE[1]+1])
-			mpl.ylim([RQ-QRANGE[1]-1,RQ-QRANGE[0]])
-			mpl.yticks(qTicksy,qLabels)
-			mpl.xticks(qTicksx,qLabels)
-			mpl.xlabel('\n' + r'$Q_{i+1}$')
-			mpl.ylabel(r'$Q_i$')
-			mpl.title('Q-Score Transition Frequencies [Read Pos:'+str(p)+']')
-			cb = mpl.colorbar()
-			cb.set_ticks([-4,-3,-2,-1, 0])
-			cb.set_ticklabels([r'$10^{-4}$',r'$10^{-3}$',r'$10^{-2}$',r'$10^{-1}$',r'$10^{0}$'])
-
-		#mpl.tight_layout()
-		mpl.show()
-
 	print('estimating average error rate via simulation...')
 	Qscores = list(range(RQ))
 	#print (len(initQ), len(initQ[0]))
@@ -207,7 +143,6 @@ parser.add_argument('-q',  type=int, required=False, metavar='<int>',     defaul
 parser.add_argument('-Q',  type=int, required=False, metavar='<int>',     default=41,      help="maximum quality score [41]")
 parser.add_argument('-n',  type=int, required=False, metavar='<int>',     default=-1,      help="maximum number of reads to process [all]")
 parser.add_argument('-s',  type=int, required=False, metavar='<int>',     default=1000000, help="number of simulation iterations [1000000]")
-parser.add_argument('--plot',        required=False, action='store_true', default=False,   help='perform some optional plotting')
 args = parser.parse_args()
 
 (INF, OUF, offQ, maxQ, MAX_READS, N_SAMP) = (args.i, args.o, args.q, args.Q, args.n, args.s)
@@ -218,10 +153,6 @@ RQ = maxQ+1
 INIT_SMOOTH = 0.
 PROB_SMOOTH = 0.
 PRINT_EVERY = 10000
-PLOT_STUFF  = args.plot
-if PLOT_STUFF:
-	print('plotting is desired, lets import matplotlib...')
-	import matplotlib.pyplot as mpl
 
 def main():
 
