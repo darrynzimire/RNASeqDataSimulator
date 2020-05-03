@@ -1,14 +1,5 @@
 #!/usr/bin/env python
 
-#
-#
-#          genSeqErrorModel.py
-#          Computes sequencing error model for genReads.py
-#
-#         
-#          Usage: python genSeqErrorModel.py -i input_reads.fq -o path/to/output_name.p
-#
-#
 
 
 import os
@@ -18,12 +9,7 @@ import random
 import numpy as np
 import argparse
 import pickle as pickle
-
-# absolute path to this script
-SIM_PATH = '/'.join(os.path.realpath(__file__).split('/')[:-2])+'/py/'
-sys.path.append(SIM_PATH)
-
-from probability		import DiscreteDistribution
+from probability import DiscreteDistribution
 
 def parseFQ(inf):
 	print('reading '+inf+'...')
@@ -92,15 +78,6 @@ def parseFQ(inf):
 		if MAX_READS > 0 and rRead >= MAX_READS:
 			break
 	f.close()
-
-	# some sanity checking again...
-	QRANGE = [min(qDict.keys()),max(qDict.keys())]
-	if QRANGE[0] < 0:
-		print('\nError: Read in Q-scores below 0\n')
-		exit(1)
-	if QRANGE[1] > RQ:
-		print('\nError: Read in Q-scores above specified maximum:',QRANGE[1],'>',RQ,'\n')
-		exit(1)
 
 	print('computing probabilities...')
 	probQ  = [None] + [[[0. for m in range(RQ)] for n in range(RQ)] for p in range(actual_readlen-1)]
