@@ -2,35 +2,29 @@
 
 The RNA-seq data simulator (RSDS) is a command-line interface implemented in Python 3. The tool simulates raw RNA-sequencing data by emulating characteristics of real RNA-seq data. Parameters to control the properties of the simulated data are available as tuneable settings such as fragment-length distribution, customized Phred-quality score modelling, customized transcript expression profiling, as well as differential transcript expression simulation. 
 
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
 ### Prerequisites
 
-What things you need to install the software and how to install them
+* Python 3
+* Pyfaidx
+* Numpy
 
-```
-Give examples
-```
+## Usage
 
-### Installing
+Here is a list of all the parameters for running the RSDS program
 
-A step by step series of examples that tell you how to get a development env running
+| Parameters  | Description                                                                       |
+|-------------|-----------------------------------------------------------------------------------|
+| -r          |  Read length (default value = 100)                                                |
+| -n          | Number of reads to simulate                                                       |
+| -f          | Reference transcriptome file in FASTA format                                      |
+| -s          | Random seed value for reproducibility                                             |
+| -o          | Output file prefix                                                                |
+| -seqmodel   | Phred quality-score model                                                         |
+| -countModel | Read count table model file                                                       |
+| -FL         | Fragment length distribution parameters (default: mean=250, standard deviation=25 |
+| -SE         | Single-end RNA-seq data                                                           |
+| -PE         | Paired-end RNA-seq data                                                           |
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
 
 ## Running the tests
 
@@ -59,7 +53,7 @@ Add additional notes about how to deploy this on a live system
 ## Built With
 
 * Python 3.7
-
+* Numpy
 
 ## Contributing
 
