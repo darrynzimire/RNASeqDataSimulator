@@ -26,9 +26,21 @@ Here is a list of all the parameters for running the RSDS program
 | -PE         | Paired-end RNA-seq data                                                           |
 
 
-## Running the tests
+## Phred quality-score model
 
-Explain how to run the automated tests for this system
+A list of the parameters for generating a quality-score model 
+
+| Parameters | Description                        |
+|------------|------------------------------------|
+| -i         | FASTQ file (read 1)                |
+| -i2        | FASTQ file (read 2)                |
+| -o         | Output file prefix                 |
+| -q         | Quality-score offset               |
+| -Q         | Maximum quality score              |
+| -n         | Maximum number of reads to process |
+| -s         | Number of simulation iterations    |
+
+
 
 ### Break down into end to end tests
 
