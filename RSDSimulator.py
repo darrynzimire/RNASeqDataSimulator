@@ -140,7 +140,7 @@ def parseIndexRef(indexFile):
         ref_inds.append([header, offset, offset + seqLen + nLines])
     
     for i in ref_inds:
-        if i[3] >= 400:
+        if i[3] >= 100:
             filt_ref_inds.append(i)
     for x in filt_ref_inds:
         i.pop(3)
