@@ -125,6 +125,7 @@ def parseIndexRef(indexFile):
     Return: The function returns a list of tuples containing the transcript id, start and end offset of the transcript sequence
     """
     ref_inds = []
+    filt_ref_inds = []
     fai = open(indexFile, 'r')
     for line in fai:
         splt = line[:-1].split('\t')
@@ -136,9 +137,15 @@ def parseIndexRef(indexFile):
 
         if seqLen % lineLn != 0:
             nLines += 1
-        ref_inds.append((header, offset, offset + seqLen + nLines))
+        ref_inds.append([header, offset, offset + seqLen + nLines])
+    
+    for i in ref_inds:
+        if i[3] >= 400:
+            filt_ref_inds.append(i)
+    for x in filt_ref_inds:
+        i.pop(3)
     fai.close()
-    return ref_inds
+    return filt_ref_inds
 
 def samplingtranscripts(ids):
     """"
@@ -311,7 +318,7 @@ def main():
 
         data = list(chain.from_iterable(sample_trans_ids))
         for j in data:
-            p = processTransIDs([j])
+            p = processTransIDs([tuple(j)])
 
             for id, seq in p.items():
                 ID.append(id)
