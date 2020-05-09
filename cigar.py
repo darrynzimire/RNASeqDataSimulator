@@ -1,5 +1,10 @@
 import re
 
+"""This module was taken directly from Stephens et al., (2016) "Simulating Next Generation Sequencing Datasets from Empirical Mutations 
+and Sequencing Models""" 
+
+
+
 class CigarString:
 	def __init__(self, stringIn=None, listIn=None):
 
