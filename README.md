@@ -53,7 +53,11 @@ A list of the parameters for generating a quality-score model
 
 ## Funding
 
-This project was funded in part by the South African National Research Foundation (SA NRF), South African Medical Research Council (SA MRC) and Bill & Melinda Gates Foundation
+This project was funded in part by:
+
+* South African National Research Foundation (SA NRF) 
+* South African Medical Research Council (SA MRC) 
+* Bill & Melinda Gates Foundation
 
 ## License
 
@@ -61,7 +65,7 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Stephens et al.,(2016) 
-* Professor Gerard Tromp (PhD)
-
-
+* Professor Gerard Tromp (PhD) - Masters Degree Supervisor
+* South African Tuberculosis Bioinformatics Initiative
+* University of Stellenbosch
+* Stephens et al.,(2016)
