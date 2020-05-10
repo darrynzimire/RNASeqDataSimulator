@@ -49,7 +49,15 @@ A list of the parameters for generating a quality-score model
 
 ## Author
 
-* **Darryn Zimire** 
+* **Darryn Zimire**
+
+## Funding
+
+This project was funded in part by:
+
+South African National Research Foundation (SA NRF)
+South African Medical Research Council (SA MRC)
+Bill & Melinda Gates Foundation
 
 ## License
 
@@ -58,6 +66,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 ## Acknowledgments
 
 * Stephens et al.,(2016) 
-
+* Professor Gerard Tromp (PhD)
 
 
