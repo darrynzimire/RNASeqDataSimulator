@@ -53,11 +53,7 @@ A list of the parameters for generating a quality-score model
 
 ## Funding
 
-This project was funded in part by:
-
-South African National Research Foundation (SA NRF)
-South African Medical Research Council (SA MRC)
-Bill & Melinda Gates Foundation
+This project was funded in part by the South African National Research Foundation (SA NRF), South African Medical Research Council (SA MRC) and Bill & Melinda Gates Foundation
 
 ## License
 
