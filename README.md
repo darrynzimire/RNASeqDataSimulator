@@ -28,7 +28,7 @@ Here is a list of all the parameters for running the RSDS program
 
 ## Data Processing
 
-Some of the scripts included here in require reference datasets which have not been included in this repository. These datasets include:
+Some of the scripts contained here, require reference datasets which have not been included in this repository. These datasets are:
 
 * A reference genome file in FASTA format 
 * RNA-sequencing data 
