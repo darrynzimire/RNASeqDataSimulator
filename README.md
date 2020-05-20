@@ -26,6 +26,14 @@ Here is a list of all the parameters for running the RSDS program
 | -PE         | Paired-end RNA-seq data                                                           |
 
 
+## Data Processing
+
+Some of the scripts included here in require reference datasets which have not been included in this repository. These datasets include:
+
+* A reference genome file in FASTA format 
+* RNA-sequencing data 
+
+
 ## Phred quality-score model
 
 A list of the parameters for generating a quality-score model 
