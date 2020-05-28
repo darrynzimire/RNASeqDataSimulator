@@ -291,6 +291,9 @@ def main():
         reads = []
         ID = []
         Seq = []
+        spos = []
+        epos = []
+        record = []
 
         if single == True and countModel == None:
             print('Simulating single-end reads....' + "\n")
@@ -329,9 +332,20 @@ def main():
             readinfo = GenerateRead(s, readlen, r, 'SE')
             startpos = readinfo[0]
             endpos = readinfo[1]
-
-            for k, l in zip(startpos, endpos):
-                read = s[int(k):int(l)]
+            spos.append(startpos)
+            epos.append(endpos)
+        
+        for k, l, s in zip(spos, epos, Seq):
+            R = [k,l,s]
+            record.append(R)
+        
+        for i in record:
+            start = i[0]
+            end   = i[1]
+            sequence = i[2]
+            
+            for p, q, v in zip(start, end, sequence):
+                read = sequence[int(p):int(q)]
                 qdata = sample_qualscore(sequencingModel=sqmodel)
                 reads.append(read)
                 quality_strings.append(qdata)
