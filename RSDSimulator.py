@@ -31,7 +31,7 @@ parser.add_argument('-PE', action='store_true',                   required=False
 
 args = parser.parse_args()
 
-(fragment_size, fragment_std) = args.FL
+(fragment_mean, fragment_std) = args.FL
 ref = args.f
 readlen = args.r
 readtot = args.n
@@ -48,7 +48,7 @@ single = False
 counts = False
 profile = False
 
-if fragment_size != None and fragment_std != None:
+if fragment_mean != None and fragment_std != None:
     paired = True
 
 if PE != None:
@@ -383,7 +383,7 @@ def main():
             counts_p = scalereadnum(count_table, readtot)
             COUNTS_P.append(counts_p)
 
-        FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+        FS = np.random.normal(fragment_mean, fragment_std, 100000).astype(int).tolist()
         for i in COUNTS_P[0]:
             randomFS = random.choices(FS, k=i)
             RFS.append(randomFS)
