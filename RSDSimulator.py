@@ -245,8 +245,7 @@ def GenerateRead(seq, readLen, n, *args):
 
     startpos = []
     seqLen = len(seq)
-    endmax = seqLen - 1
-
+  
     for ag in args:
 
         if ag == 'SE':
@@ -258,16 +257,13 @@ def GenerateRead(seq, readLen, n, *args):
             endpos = [i + readLen for i in startpos[0]]
 
         else:
-
-            v = np.round(np.random.uniform(low=1, high=endmax, size=100000))
-            for i in readLen:
-                spos = int(random.choice(v))
-                startpos.append(spos)
-            for p,q in zip(startpos, readLen):
-                endpos = p + q
-
-
-    return startpos[0], endpos, seqLen, endmax
+            
+            nmax = [seqLen - i - 1 for i in readLen]
+            v = np.round(np.random.uniform(low=1, high=nmax, size=n))
+            spos = (random.choices(v, k=len(readLen)))
+            startpos.append(spos)
+            
+    return startpos, seqLen
 
 def sample_qualscore(sequencingModel):
     (myQual, myErrors) = SE_CLASS.getSequencingErrors(sequencingModel)
@@ -399,12 +395,24 @@ def main():
                 Seq.append(seq)
         for s, r in zip(Seq, RFS):
             readinfo = GenerateRead(s, r, len(r), 'PE')
-            startpos = readinfo[0]
+            startpos = list(chain.from_iterable(readinfo[0]))
             f_startpos.append(startpos)
-            endpos = readinfo[1]
+            endpos = [readlen + i for i in startpos]
             f_endpos.append(endpos)
+            
         for k, l, s in zip(f_startpos, f_endpos, Seq):
-
+            R = [k,l,s]
+            record.append(R)
+        
+        for i in record:
+            start = i[0]
+            end = i[1]
+            sequence = i[2]
+            
+            for p,e,s in zip(start, end, sequence):
+                frag = sequence[int(p):int(e)]
+                Fragments.append(frag)
+            
             frag = s[k:l]
             Fragments.append(frag)
             qdata = sample_qualscore(sequencingModel=sqmodel)
