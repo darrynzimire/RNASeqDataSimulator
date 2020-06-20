@@ -14,6 +14,7 @@ from SequenceContainer import ReadContainer
 
 # Parsing all input arguments
 
+
 parser = argparse.ArgumentParser(description='RNASeqDesigner Version 1')
 # parser.add_argument('-h', type=int, required=True, default=100, metavar='<i>', help='help function')
 parser.add_argument('-r',               type=int,                 required=True,              default=101, metavar='<int>', help='Read length')
