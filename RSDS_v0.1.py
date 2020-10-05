@@ -338,7 +338,7 @@ def main():
         print('Simulation process completed ')
     
     elif args.PE:
-        
+        sample_transcript_ids = []
         R1 = []
         R2 = []
         RFS = []
@@ -349,25 +349,33 @@ def main():
         Fragments = []
         records = []
         reads = []
+        FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
         
         if countModel == None:
             print('Generating paired-end reads.....' + "\n")
             print('Sampling counts from negative binomial model' + "\n")
             counts_p = scalereadnum(counts_NB, readtot)
             COUNTS_P.append(counts_p)
-        
-        elif countModel != None:
+            sample_transcript_ids = random.choices(ref_transcript_ids, k=len(COUNTS_P[0]))
+            
+        elif countModel != None and readtot == None:
             print('Generating paired-end reads' + "\n")
             print('Simulating empirical transcript profile.....' + "\n")
-            counts_p = scalereadnum(count_table, readtot)
-            COUNTS_P.append(counts_p)
+            COUNTS_P.append(profile_counts[0])
+            sample_transcript_ids = profile_id[0]
         
-        FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+        elif countModel != None and readtot != None:
+            print('Generating paired-end reads' + "\n")
+            print('Simulating empirical transcript profile.....' + "\n")
+            counts_p = scalereadnum(profile_propcount, readtot)
+            COUNTS_P.append(profile_propcount[0])
+            sample_transcripts_ids = profile_id[0]
+            
         for i in COUNTS_P[0]:
             randomFS = random.choices(FS, k=i)
             RFS.append(randomFS)
         
-        samptransids = random.choices(ref_transcript_ids, k=len(COUNTS_P[0]))
+        
         f_startpos = []
         f_endpos = []
         for j in (samptransids):
