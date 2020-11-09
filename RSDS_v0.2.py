@@ -40,6 +40,7 @@ def get_arguments():
 
     return parser
 
+
 argparser = get_arguments()
 args = argparser.parse_args()
 
@@ -303,51 +304,6 @@ def process_reads_PE(fragment, index):
             f2.write('{}\n{}\n+\n{}\n'.format(id, read2, q2))
            
     return
-
-    # return id, R1, R2, q1, q2
-
-
-    # with open(output + '_R1.fastq', 'w') as f1, open(output + '_R2.fastq', 'w') as f2:
-    #     if float(prob) < 0.5:
-    #
-    #         f1.write('{}\n{}\n+\n{}\n'.format(id, read1, q1))
-    #         f2.write('{}\n{}\n+\n{}\n'.format(id, read2, q2))
-    #     else:
-    #         f1.writelines('{}\n{}\n+\n{}\n'.format(id, read2, q1))
-    #         f2.writelines('{}\n{}\n+\n{}\n'.format(id, read1, q2))
-        # R2.append(read1)
-        # R1.append(read2)
-    # else:
-    #     R1.append(read1)
-    #     R2.append(read2)
-    # print(R1)
-    # return R1, R2
-
-    # if float(prob) < 0.5:
-    # f1 = open(output + '_R1.fastq', 'w')
-    # f2 = open(output + '_R2.fastq', 'w')
-
-
-
-    # f1.close()
-    # f2.close()
-    #
-    # return None
-    #             R1_new.append(k)
-
-    #             R2_new.append(j)
-    #         else:
-    #             R1_new.append(j)
-    #             R2_new.append(k)
-    #
-    # with open(output + '_R1.fastq', 'w') as f1, open(output + '_R2.fastq', 'w') as f2:
-    #     for index, (read1, read2) in enumerate(zip(R1_new, R2_new)):
-    #         id = sequence_identifier(index)
-    #         q = sample_qualscore(sequencingModel=sqmodel)
-    #         f1.write('{}\n{}\n+\n{}\n'.format(id, read1, q))
-    #         q2 = sample_qualscore(sequencingModel=sqmodel)
-    #         f2.write('{}\n{}\n+\n{}\n'.format(id, read2, q2))
-
 
 
 def main():
