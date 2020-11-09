@@ -23,13 +23,9 @@ outfile = args.o
 
 def process_SAM(infile):
     
-    samFile = ''
-    for file in os.listdir('.'):
-        if file.endswith('.sam'):
-            samFile = os.path.join('.', file)
-    
+
     FL = []
-    f = open(samFile, 'r')
+    f = open(infile, 'r')
     for line in f:
         
         if line[0] != '@':
