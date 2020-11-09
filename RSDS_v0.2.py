@@ -40,7 +40,6 @@ def get_arguments():
 
     return parser
 
-
 argparser = get_arguments()
 args = argparser.parse_args()
 
