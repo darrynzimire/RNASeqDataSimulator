@@ -210,10 +210,9 @@ def GenerateRead(seq, readLen, n, *args):
     """
 
     seqLen = len(seq)
-    raw_reads = []
-    Quality = []
-    seq_info = []
-    
+    spos = []
+    epos = []
+
     for ag in args:
 
             if ag == 'SE':
@@ -222,17 +221,8 @@ def GenerateRead(seq, readLen, n, *args):
                     v = np.round(np.random.uniform(low=0, high=nmax, size=n))
                     startpos = list(random.choices(v, k=n))
                     endpos = [i + readLen for i in startpos]
-
-                    for index, (s, e) in enumerate(zip(startpos, endpos)):
-                        id = sequence_identifier(index)
-                        read = seq[int(s):int(e)]
-                        q = sample_qualscore(sequencingModel=sqmodel)
-                        raw_reads.append(read)
-                        Quality.append(q)
-                        seq_info.append(id)
-                    with open(output + '.fastq', 'w') as handle:
-                        for id, read, q in zip(seq_info, raw_reads, Quality):
-                            handle.writelines('{}\n{}\n+\n{}\n'.format(id, read, q))
+                    spos.append(startpos)
+                    epos.append(endpos)
 
             elif ag == 'PE':
 
@@ -240,13 +230,10 @@ def GenerateRead(seq, readLen, n, *args):
                 v = np.round(np.random.uniform(low=0, high=nmax, size=n))
                 startpos = list(random.choices(v, k=len(readLen)))
                 endpos = [i+j for i, j in zip(startpos, readLen)]
-                with open(output + '_R1.fastq', 'w') as f1, open(output + '_R2.fastq', 'w') as f2:
+                spos.append(startpos)
+                epos.append(endpos)
 
-                    for index, (i, j) in enumerate(zip(startpos, endpos)):
-                        frag = seq[int(i):int(j)]
-                        process_reads_PE(frag, index)
-
-    return seq_info, raw_reads, Quality
+    return spos, epos
 
     
 def reverse_complement(inputread):
@@ -290,20 +277,11 @@ def process_reads_PE(fragment, index):
     prob = str(np.random.rand(1)).lstrip('[').rstrip(']')
     read1 = ''.join(map(str, fragment[:readlen]))
     read2 = str(reverse_complement(fragment[-readlen:]))
-    id = sequence_identifier(index)
-    q1 = sample_qualscore(sequencingModel=sqmodel)
-    q2 = sample_qualscore(sequencingModel=sqmodel)
-    with open(output + '_R1.fastq', 'w') as f1, open(output + '_R2.fastq', 'w') as f2:
+    if float(prob) < 0.5:
+        R1.append(read2)
+        R2.append(read1)
 
-        if float(prob) < 0.5:
-            f1.writelines('{}\n{}\n+\n{}\n'.format(id, read2, q1))
-            f2.writelines('{}\n{}\n+\n{}\n'.format(id, read1, q2))
-           
-        else:
-            f1.write('{}\n{}\n+\n{}\n'.format(id, read1, q1))
-            f2.write('{}\n{}\n+\n{}\n'.format(id, read2, q2))
-           
-    return
+    return R1, R2
 
 
 def main():
@@ -325,8 +303,7 @@ def main():
         profile_ids.append(ids)
         profile_counts.append(counts)
         profile_propcount.append(propcount[0])
-    Totalcounts = sum(profile_counts[0])
-    print(Totalcounts)
+
     if args.SE:
         
         sample_trans_ids = []
@@ -361,15 +338,19 @@ def main():
 
         for j in data:
             p = processTransIDs([j])
-            
             for id, seq in p.items():
                 ID.append(id)
                 Seq.append(seq)
-
-        for s, r in zip(Seq, COUNTS[0]):
-            GenerateRead(s, readlen, r, 'SE')
-            
-           
+        with gzip.open(output + '.fastq.gz', 'wb') as handle:
+            for seq, r in zip(Seq, COUNTS[0]):
+                readinfo = GenerateRead(seq, readlen, r, 'SE')
+                startpos = readinfo[0]
+                endpos = readinfo[1]
+                for index, (i,j) in enumerate(zip(startpos[0], endpos[0])):
+                    header = sequence_identifier(index)
+                    read = seq[int(i):int(j)]
+                    q = sample_qualscore(sequencingModel=sqmodel)
+                    handle.write('{}\n{}\n+\n{}\n'.format(header, read, q).encode())
 
     elif args.PE:
 
@@ -378,6 +359,8 @@ def main():
         COUNTS_P = []
         ID = []
         Seq = []
+        R1 = []
+        R2 = []
         FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
 
         if countModel == None:
@@ -410,8 +393,22 @@ def main():
                 ID.append(id)
                 Seq.append(seq)
 
-        for s, r in zip(Seq, RFS):
-            GenerateRead(s, r, len(r), 'PE')
+        for seq, r in zip(Seq, RFS):
+            readinfo = GenerateRead(seq, r, len(r), 'PE')
+            startpos = readinfo[0]
+            endpos = readinfo[1]
+            for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
+                read = seq[int(i):int(j)]
+                data = process_reads_PE(read, index)
+                R1.append(''.join(data[0]))
+                R2.append(''.join(data[1]))
+        with gzip.open(output + '_R1.fastq.gz', 'wb') as f1, gzip.open(output, '_R2.fastq.gz', 'wb') as f2:
+            for index, (i, j) in enumerate(zip(R1, R2)):
+                id = sequence_identifier(index)
+                q1 = sample_qualscore(sequencingModel=sqmodel)
+                f1.write('{}\n{}\n+\n{}\n'.format(id, i, q1).encode())
+                q2 = sample_qualscore(sequencingModel=sqmodel)
+                f2.write('{}\n{}\n+\n{}\n'.format(id, i, q2).encode())
 
 
 if __name__ == '__main__':
