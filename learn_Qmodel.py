@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 
-
 import os
 import sys
 import gzip
@@ -10,6 +9,7 @@ import numpy as np
 import argparse
 import pickle as pickle
 from probability import DiscreteDistribution
+
 
 def parseFQ(inf):
 	print('reading '+inf+'...')
@@ -99,10 +99,8 @@ def parseFQ(inf):
 
 	print('estimating average error rate via simulation...')
 	Qscores = list(range(RQ))
-	#print (len(initQ), len(initQ[0]))
-	#print (len(probQ), len(probQ[1]), len(probQ[1][0]))
-
-	initDistByPos        = [DiscreteDistribution(initQ[i],Qscores) for i in range(len(initQ))]
+	
+	initDistByPos        = [DiscreteDistribution(initQ[i], Qscores) for i in range(len(initQ))]
 	probDistByPosByPrevQ = [None]
 	for i in range(1,len(initQ)):
 		probDistByPosByPrevQ.append([])
@@ -128,7 +126,7 @@ def parseFQ(inf):
 	avgError = 0.
 	for k in sorted(countDict.keys()):
 		eVal = 10.**(-k/10.)
-		#print k, eVal, countDict[k]
+	
 		avgError += eVal * (countDict[k]/totBases)
 	print('AVG ERROR RATE:',avgError)
 
@@ -186,9 +184,6 @@ def main():
 		# if a sequencing insertion error occurs, what's the probability of it being an A, C, G, T...
 		SIE_INS_NUCL = [0.25, 0.25, 0.25, 0.25]
 
-	#
-	#	otherwise we need to parse a pileup and compute statistics!
-	#
 	else:
 		print('\nPileup parsing coming soon!\n')
 		exit(1)
@@ -203,6 +198,7 @@ def main():
 		pickle.dump([initQ,probQ,Qscores,offQ,avgError,errorParams],open(OUF,'wb'))
 	else:
 		pickle.dump([initQ,probQ,initQ2,probQ2,Qscores,offQ,avgError,errorParams],open(OUF,'wb'))
+
 
 if __name__ == '__main__':
 	main()

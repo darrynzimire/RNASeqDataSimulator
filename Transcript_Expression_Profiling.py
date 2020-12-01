@@ -82,7 +82,6 @@ def process_readcounts(count_table):
 	df_count_table = pd.read_csv(count_table, sep='\t')
 	df1 = df_count_table[df_count_table.IsoPct != 0]
 	df1.drop(df1.index)
-
 	read_counts = df1['expected_count'].tolist()
 
 	return read_counts, df1
