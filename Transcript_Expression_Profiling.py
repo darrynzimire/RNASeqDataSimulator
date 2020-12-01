@@ -13,7 +13,6 @@ import os
 import pandas as pd
 import pickle as pickle
 import pyfaidx
-from collections import Counter
 import numpy as np
 import re
 
@@ -96,7 +95,7 @@ def main():
 	categories = ref_index[1]
 
 	df_ref = pd.DataFrame(ref, columns=['Transcript_ID', 'start', 'end'])
-	df_ref['ENS_transcript_id'] = df_ref['Transcript_ID'].str[1:18]
+	df_ref['ENS_transcript_id'] = df_ref['Transcript_ID'].apply(lambda x: re.sub(r"^>(ENST\d*\.\d{1,3})\|.*", r"\1", x))
 	table = process_readcounts(count_table)
 	df_table = table[1]
 	df_result = pd.merge(df_table, df_ref, left_on='transcript_id', right_on='ENS_transcript_id')
