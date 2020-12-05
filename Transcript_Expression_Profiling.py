@@ -13,7 +13,6 @@ import os
 import pandas as pd
 import pickle as pickle
 import pyfaidx
-import numpy as np
 import re
 
 
