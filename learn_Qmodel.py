@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import os
 import sys
 import gzip
@@ -43,17 +42,17 @@ def parseFQ(inf):
 			data2 = f.readline()
 			data3 = f.readline()
 			data4 = f.readline()
-			if not all([data1,data2,data3,data4]):
+			if not all([data1, data2, data3,data4]):
 				break
 
 		if actual_readlen == 0:
 			if inf[-3:] != '.gz' and not IS_SAM:
 				totalSize = os.path.getsize(inf)
 				entrySize = sum([len(n) for n in [data1,data2,data3,data4]])
-				print('estimated number of reads in file:',int(float(totalSize)/entrySize))
+				print('estimated number of reads in file:', int(float(totalSize)/entrySize))
 			actual_readlen = len(data4)-1
 			print('assuming read length is uniform...')
-			print('detected read length (from first read found):',actual_readlen)
+			print('detected read length (from first read found):', actual_readlen)
 			priorQ = np.zeros([actual_readlen,RQ])
 			totalQ = [None] + [np.zeros([RQ,RQ]) for n in range(actual_readlen-1)]
 
@@ -102,13 +101,13 @@ def parseFQ(inf):
 	
 	initDistByPos        = [DiscreteDistribution(initQ[i], Qscores) for i in range(len(initQ))]
 	probDistByPosByPrevQ = [None]
-	for i in range(1,len(initQ)):
+	for i in range(1, len(initQ)):
 		probDistByPosByPrevQ.append([])
 		for j in range(len(initQ[0])):
 			if np.sum(probQ[i][j]) <= 0.:	# if we don't have sufficient data for a transition, use the previous qscore
-				probDistByPosByPrevQ[-1].append(DiscreteDistribution([1],[Qscores[j]],degenerateVal=Qscores[j]))
+				probDistByPosByPrevQ[-1].append(DiscreteDistribution([1], [Qscores[j]], degenerateVal=Qscores[j]))
 			else:
-				probDistByPosByPrevQ[-1].append(DiscreteDistribution(probQ[i][j],Qscores))
+				probDistByPosByPrevQ[-1].append(DiscreteDistribution(probQ[i][j], Qscores))
 
 	countDict = {}
 	for q in Qscores:
@@ -128,7 +127,7 @@ def parseFQ(inf):
 		eVal = 10.**(-k/10.)
 	
 		avgError += eVal * (countDict[k]/totBases)
-	print('AVG ERROR RATE:',avgError)
+	print('AVG ERROR RATE:', avgError)
 
 	return (initQ, probQ, avgError)
 

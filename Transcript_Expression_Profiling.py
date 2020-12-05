@@ -87,12 +87,8 @@ def process_readcounts(count_table):
 	return read_counts, df1
 
 
-def main():
-
-	ref_index = parseIndexRef(indexFile)
-	ref = ref_index[0]
-	categories = ref_index[1]
-
+def create_model(ref):
+	
 	df_ref = pd.DataFrame(ref, columns=['Transcript_ID', 'start', 'end'])
 	df_ref['ENS_transcript_id'] = df_ref['Transcript_ID'].apply(lambda x: re.sub(r"^>(ENST\d*\.\d{1,3})\|.*", r"\1", x))
 	table = process_readcounts(count_table)
@@ -102,7 +98,15 @@ def main():
 	total = df_result['expected_count'].sum()
 	df_result['proportional_count'] = df_result['expected_count'].div(total)
 
-	records = df_result.to_records(index=False)
+
+def main():
+
+	ref_index = parseIndexRef(indexFile)
+	ref = ref_index[0]
+	categories = ref_index[1]
+
+	model = create_model(ref)
+	records = model.to_records(index=False)
 
 	outf = modelName + '.p'
 	output = open(outf, 'wb')
