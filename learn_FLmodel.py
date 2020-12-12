@@ -51,22 +51,36 @@ def process_SAM(infile):
     return data2log
 
 
+def percentage(percent, whole):
+
+  return (percent * whole) / 100.0
+
+
+def optimal_n_components(aic, n):
+    n_components = len(aic)
+
+    ll = [i - (index + 1) * 2 for index, i in enumerate(aic)]
+    x = [i * percentage(10, n) + j for i, j in zip(ll, range(n_components + 1))]
+    minimum = min(x)
+
+    N = [k - minimum for k in x]
+    val, idx = min((val, idx) for (idx, val) in enumerate(N))
+
+    return val, idx + 1
+
+
 def model_fitting(data, n):
-    
-    global best_gmm
-    
-    lowest_aic = np.infty
+
     aic = []
     n_components_range = range(1, n + 1)
     for n_components in n_components_range:
         gmm = GMM(n_components=n_components, covariance_type='full')
         gmm.fit(data)
         aic.append(gmm.aic(data))
-        if aic[-1] < lowest_aic:
-            lowest_aic = aic[-1]
-            best_gmm = gmm
-    
-    clf = best_gmm
+
+    N = optimal_n_components(aic, len(data))
+    gmm = GMM(n_components=N, covariance_type='full')
+    clf = gmm.fit(data)
     mus = clf.means_
     sigmas = clf.covariances_
     weights = clf.weights_
@@ -76,7 +90,7 @@ def model_fitting(data, n):
 
 
 def main():
-    
+
     FL_model = model_fitting(process_SAM(samFile), components)
     modelName = outfile + '_p.gzip'
     g = gzip.open(modelName, 'wb')

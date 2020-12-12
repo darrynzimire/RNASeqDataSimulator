@@ -13,6 +13,7 @@ from process_inputFiles import process_countmodel
 import random
 import distributions
 import argparse
+import process_models
 
 
 
@@ -33,8 +34,9 @@ def get_arguments():
     parser.add_argument('-c', type=str, required=False,
                         help='transcript expression count model')
     parser.add_argument('-er', type=float, required=False, default=-1,  help='Error rate')
-    parser.add_argument('-FL', nargs=2, type=int, required=False, default=(250, 25),
+    parser.add_argument('-FLdist', nargs=2, type=int, required=False, default=(250, 25),
                         help='Fragment length distribution parameters')
+    parser.add_argument('-FLmodel', type=str, required=False)
     parser.add_argument('-SE', action='store_true', required=False, help='Flag for producing single-end reads ')
     parser.add_argument('-PE', action='store_true', required=False, help='Flag for producing paired-end reads')
 
@@ -44,7 +46,8 @@ def get_arguments():
 argparser = get_arguments()
 args = argparser.parse_args()
 
-(fragment_size, fragment_std) = args.FL
+(fragment_size, fragment_std) = args.FLdist
+FLmodel = args.FLmodel
 ref = args.f
 readlen = args.r
 readtot = args.n
@@ -384,8 +387,14 @@ def main():
             sample_trans_ids = profile_ids
 
         for i in COUNTS_P[0]:
-            randomFS = random.choices(FS, k=i)
-            RFS.append(randomFS)
+            if FLmodel != None:
+                randomFS = random.choices(process_models.proc_FLmodel(FLmodel, readtot), k=i)
+                RFS.append(randomFS)
+                print(randomFS)
+
+            else:
+                randomFS = random.choices(FS, k=i)
+                RFS.append(randomFS)
 
         for j in sample_trans_ids:
             p = processTransIDs([j])
