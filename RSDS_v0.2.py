@@ -16,7 +16,6 @@ import argparse
 import process_models
 
 
-
 def get_arguments():
 
     tool_description = 'This tool creates a position-wise distribution of quality values from a fastq file '\
@@ -112,6 +111,7 @@ def samplingtranscripts(ids):
     sampledtranscripts = random.sample(ids, numreads)
 
     return sampledtranscripts
+
 
 def scalereadnum(read_counts, n):
 
@@ -221,12 +221,12 @@ def GenerateRead(seq, readLen, n, *args):
             if ag == 'SE':
                     
                     nmax = seqLen - readLen - 1
-                    v = np.round(np.random.uniform(low=0, high=nmax, size=n))
+                    v = np.round(np.random.uniform(low=0, high=nmax, size=None))
                     startpos = list(random.choices(v, k=n))
                     endpos = [i + readLen for i in startpos]
                     spos.append(startpos)
                     epos.append(endpos)
-
+ 
             elif ag == 'PE':
 
                 nmax = [seqLen - i - 1 for i in readLen]
@@ -349,7 +349,7 @@ def main():
                 readinfo = GenerateRead(seq, readlen, r, 'SE')
                 startpos = readinfo[0]
                 endpos = readinfo[1]
-                for index, (i,j) in enumerate(zip(startpos[0], endpos[0])):
+                for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
                     header = sequence_identifier(index)
                     read = seq[int(i):int(j)]
                     q = sample_qualscore(sequencingModel=sqmodel)
