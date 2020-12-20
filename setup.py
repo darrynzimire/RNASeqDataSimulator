@@ -1,4 +1,4 @@
-# encoding = UTF-8
+# encoding=utf-8
 
 import setuptools
 
@@ -10,7 +10,7 @@ setuptools.setup(
 	version="0.0.1",
 	author="Darryn Zimire",
 	author_email="darrynzim@sun.ac.za",
-	description="Simulator for RNA-seq datasets for experimental design.",
+	description="Simulator for RNA-sequencing datasets to inform experimental design.",
 	long_description=long_description,
 	long_description_content_type='text/markdown',
 	license="MIT",
@@ -29,7 +29,11 @@ setuptools.setup(
 	install_requires=["numpy", "matplotlib", "seaborn",
 					  "pyfaidx", "pandas", "biopython", "scipy",
 					  "scikit-learn"],
-	packages=setuptools.find_packages()
+	packages=setuptools.find_packages(),
+	entry_points={
+		[
+
+		]}
 
 	)
 

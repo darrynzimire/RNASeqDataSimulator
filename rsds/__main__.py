@@ -1,6 +1,4 @@
-#!/usr/bin/python3
 # encoding =UTF-8
-
 
 import os
 import numpy as np

@@ -1,3 +1,5 @@
+# encoding=utf-8
+
 import re
 
 """This module was taken directly from Stephens et al., (2016) "Simulating Next Generation Sequencing Datasets from Empirical Mutations 
