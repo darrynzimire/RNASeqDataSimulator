@@ -4,11 +4,11 @@ The RNA-seq data simulator (RSDS) is a command-line interface implemented in Pyt
 
 ### Pre-requisites
 
-* Python 3
-* Pyfaidx
-* Numpy
-* Pandas
-* Scikit-learn
+* python 3
+* pyfaidx
+* numpy
+* pandas
+* scikit-learn
 
 ## Usage
 
