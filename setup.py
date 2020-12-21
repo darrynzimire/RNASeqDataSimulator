@@ -31,8 +31,7 @@ setuptools.setup(
 					  "scikit-learn", 'setuptools'],
 	packages=setuptools.find_packages(),
 	entry_points={
-		'console_scripts':[
-
+		'console_scripts':['rsds=rsds.__main__:main'
 		]}
 
 	)
