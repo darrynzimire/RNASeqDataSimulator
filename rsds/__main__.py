@@ -8,8 +8,8 @@ import gzip
 from itertools import chain
 from Bio.Seq import Seq
 import pyfaidx
-from rsds import SequenceContainer, distributions, probability, process_inputFiles,\
-	process_models, process_args
+from rsds import SequenceContainer, distributions
+from rsds import process_inputFiles
 # from SequenceContainer import ReadContainer
 # from process_inputFiles import process_countmodel
 # import random
@@ -346,7 +346,7 @@ def main():
 	profile_counts = []
 	profile_ids = []
 	if args.c:
-		profile = process_countmodel(countModel)
+		profile = process_inputFiles.process_countmodel(countModel)
 		errlog.debug(print('detecting profile'))
 		ids = profile[0]
 		counts = profile[1]
