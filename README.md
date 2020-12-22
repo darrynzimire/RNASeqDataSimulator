@@ -13,14 +13,20 @@ The RNA-seq data simulator (RSDS) is a command-line interface implemented in Pyt
 
 ### Installation
 
-The source code can be downloaded from github and rsds can be installed  using the setup.py script:
+The source code can be downloaded from github and rsds can be installed  using the setup.py script:  
+git.clone https://github.com/darrynzimire/RNASeqDataSimulator.git  
+cd RNASeqDataSimulator  
+pip install rsds   
+
+*Alternatively to install in user space*  
+pip install --user rsds
 
 
 ### Usage
 
 To simulate a RNA-seq dataset, call rsds from the command-line:
 
-$ rsds
+$ rsds 
 
 
 Here is a list of all the parameters for running the RSDS program
