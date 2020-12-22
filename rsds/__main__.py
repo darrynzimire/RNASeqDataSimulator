@@ -8,8 +8,9 @@ import gzip
 from itertools import chain
 from Bio.Seq import Seq
 import pyfaidx
-from rsds import SequenceContainer, distributions
+from rsds import SequenceContainer
 from rsds import process_inputFiles
+from rsds import distributions
 # from SequenceContainer import ReadContainer
 # from process_inputFiles import process_countmodel
 # import random
