@@ -8,10 +8,12 @@ import gzip
 from itertools import chain
 from Bio.Seq import Seq
 import pyfaidx
-from SequenceContainer import ReadContainer
-from process_inputFiles import process_countmodel
-import random
-import distributions
+from rsds import SequenceContainer, distributions, probability, process_inputFiles,\
+	process_models, process_args
+# from SequenceContainer import ReadContainer
+# from process_inputFiles import process_countmodel
+# import random
+# import distributions
 import argparse
 import logging.handlers
 from scipy import sparse
@@ -286,7 +288,7 @@ def reverse_complement(inputread):
 	return read
 
 
-SE_CLASS = ReadContainer(readlen, sqmodel, SE_RATE)
+SE_CLASS = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
 
 
 def sample_qualscore(sequencingModel):
