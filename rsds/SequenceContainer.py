@@ -8,8 +8,8 @@ import bisect
 import pickle as pickle
 import numpy as np
 
-from probability import DiscreteDistribution, poisson_list, quantize_list
-from neat_cigar import CigarString
+from rsds.probability import DiscreteDistribution, poisson_list, quantize_list
+from rsds.cigar import CigarString
 
 MAX_ATTEMPTS = 100	# max attempts to insert a mutation into a valid position
 MAX_MUTFRAC  = 0.3	# the maximum percentage of a window that can contain mutations
