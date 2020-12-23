@@ -10,7 +10,7 @@ from Bio.Seq import Seq
 import pyfaidx
 from rsds import SequenceContainer
 from rsds import process_inputFiles
-from rsds import distributions
+from rsds import distributions, probability
 # from SequenceContainer import ReadContainer
 # from process_inputFiles import process_countmodel
 # import random
