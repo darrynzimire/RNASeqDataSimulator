@@ -11,14 +11,8 @@ import pyfaidx
 from rsds import SequenceContainer
 from rsds import process_inputFiles
 from rsds import distributions, cigar
-import rsds.probability
-# from SequenceContainer import ReadContainer
-# from process_inputFiles import process_countmodel
-# import random
-# import distributions
 import argparse
 import logging.handlers
-from scipy import sparse
 from datetime import datetime
 
 if not sys.warnoptions:
