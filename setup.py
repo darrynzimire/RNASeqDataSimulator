@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setuptools.setup(
 	name="rsds",
-	version="1.0.0",
+	version="0.1.0",
 	author="Darryn Zimire",
 	author_email="darrynzim@sun.ac.za",
 	description="Simulator for RNA-sequencing datasets to inform experimental design.",
