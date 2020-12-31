@@ -1,9 +1,7 @@
-#!/usr/bin/env python
+# encoding=utf-8
 
 import os
-import sys
 import gzip
-import random
 import numpy as np
 import argparse
 import pickle as pickle
