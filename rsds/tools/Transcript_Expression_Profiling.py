@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# encoding = UTF-8
+# encoding=utf-8
 
 """
 This program takes in a read count expression table and a file output prefix. The table is parsed and puts out vector of
