@@ -6,7 +6,6 @@ import sys
 import numpy as np
 import gzip
 import random
-from itertools import chain
 from Bio.Seq import Seq
 import pyfaidx
 from rsds import SequenceContainer
