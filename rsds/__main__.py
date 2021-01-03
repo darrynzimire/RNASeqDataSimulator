@@ -5,6 +5,7 @@ import os
 import sys
 import numpy as np
 import gzip
+import random
 from itertools import chain
 from Bio.Seq import Seq
 import pyfaidx
@@ -83,7 +84,7 @@ args = argparser.parse_args()
 ref = args.f
 readlen = args.r
 readtot = args.n
-SEED = args.s
+seed = args.s
 output = args.o
 sqmodel = args.q
 countModel = args.c
@@ -386,7 +387,6 @@ def main():
 				ID.append(id)
 				Seq.append(seq)
 		with gzip.open(output + '.fastq.gz', 'wb') as handle:
-			# data = chain.from_iterable(COUNTS[0])
 			for seq, r in zip(Seq, COUNTS[0]):
 
 				readinfo = GenerateRead(seq, readlen, r, 'SE')
@@ -394,16 +394,8 @@ def main():
 				endpos = readinfo[1]
 
 				for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
-					# length = j-i
-					# print(length)
-					# if length < readlen:
-					#     print(length)
-					# print(j-i)
-
 					header = sequence_identifier(index)
 					read = seq[int(i):int(j)]
-					# if len(read) < readlen:
-					#     print(len(read))
 					q = sample_qualscore(sequencingModel=sqmodel)
 					handle.write('{}\n{}\n+\n{}\n'.format(header, read, q).encode())
 
