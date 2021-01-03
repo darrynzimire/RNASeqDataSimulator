@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-# encoding =UTF-8
+# encoding=utf-8
 
 import os
 import sys

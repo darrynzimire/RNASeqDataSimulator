@@ -7,7 +7,7 @@ with open('README.md', 'r', encoding='utf-8') as fh:
 
 setuptools.setup(
 	name="rsds",
-	version="0.1.0",
+	version="1.0.0",
 	author="Darryn Zimire",
 	author_email="darrynzim@sun.ac.za",
 	description="Simulator for RNA-sequencing datasets to inform experimental design.",
@@ -32,11 +32,10 @@ setuptools.setup(
 	packages=setuptools.find_packages(),
 	entry_points={
 		'console_scripts':[
-			'rsds-simulate=rsds.__main__:main',
-			'rsds-learn-qmodel=rsds.tools.learn_Qmodel:main',
-			'rsds-learn-FLmodel=rsds.tools.learn_FLmodel:main',
+			'rsds-simulate = rsds.__main__:main',
+			'rsds-learn-qmodel = rsds.tools.learn_Qmodel:main',
+			'rsds-learn-FLmodel = rsds.tools.learn_FLmodel:main',
 
 		]},
-
-	)
+)
 

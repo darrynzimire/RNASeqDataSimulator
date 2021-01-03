@@ -1,11 +1,12 @@
-#!/usr/bin/python3
-# encoding =UTF-8
+# encoding=utf-8
 
 import numpy as np
 import argparse
 from sklearn.mixture import GaussianMixture as GMM
 import pickle as pickle
 import gzip
+from datetime import datetime
+
 
 parser = argparse.ArgumentParser(description='fragment length distribution modelling')
 parser.add_argument('-f', type=str, required=True, help='Input SAM file')
@@ -91,7 +92,6 @@ def model_fitting(data, n):
 
     N = optimal_n_components(aic, len(data))
 
-    
     N = optimal_n_components(aic, total_obs)
     gmm = GMM(n_components=N, covariance_type='full')
     clf = gmm.fit(data)
@@ -103,6 +103,9 @@ def model_fitting(data, n):
     return model
 
 
+start_time = datetime.now()
+
+
 def main():
 
     FL_model = model_fitting(process_SAM(samFile), components)
@@ -110,6 +113,8 @@ def main():
     g = gzip.open(modelName, 'wb')
     pickle.dump(FL_model, g)
     print('Finished!')
+    end_time = datetime.now()
+    print('Duration: {}'.format(end_time - start_time))
 
 
 if __name__ == '__main__':
