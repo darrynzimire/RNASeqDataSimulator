@@ -3,7 +3,7 @@
 import setuptools
 
 with open('README.md', 'r', encoding='utf-8') as fh:
-	long_description=fh.read()
+	long_description = fh.read()
 
 setuptools.setup(
 	name="rsds",
@@ -29,12 +29,19 @@ setuptools.setup(
 	install_requires=["numpy", "matplotlib", "seaborn",
 					  "pyfaidx", "pandas", "biopython", "scipy",
 					  "scikit-learn", 'setuptools'],
+	package_data={
+		["quality_profiles/*.Qual.p",
+		 "toy_data/toy_ref.fa",
+		 "toy_data/toy.fastq"]
+	},
 	packages=setuptools.find_packages(),
 	entry_points={
-		'console_scripts':[
+		'console_scripts': [
+			'rsds=rsds.man:main',
 			'rsds-simulate = rsds.__main__:main',
 			'rsds-learn-qmodel = rsds.tools.learn_Qmodel:main',
 			'rsds-learn-FLmodel = rsds.tools.learn_FLmodel:main',
+			'rsds-learn-profile = rsds.tools.Transcript_Expression_Profiling:main'
 
 		]},
 )

@@ -5,10 +5,11 @@ import gzip
 import numpy as np
 import argparse
 import pickle as pickle
-from probability import DiscreteDistribution
+from rsds.probability import DiscreteDistribution
 
 
 def parseFQ(inf):
+
 	print('reading '+inf+'...')
 	if inf[-3:] == '.gz':
 		print('detected gzip suffix...')
@@ -159,9 +160,6 @@ def main():
 		(initQ2, probQ2, avgError2) = parseFQ(INF2)
 		avgError = (avgError1+avgError2)/2.
 
-	#
-	#	embed some default sequencing error parameters if no pileup is provided
-	#
 	if PILEUP == None:
 
 		print('Using default sequencing error parameters...')
@@ -187,14 +185,11 @@ def main():
 
 	errorParams  = [SSE_PROB, SIE_RATE, SIE_PROB, SIE_VAL, SIE_INS_FREQ, SIE_INS_NUCL]
 
-	#
-	#	finally, let's save our output model
-	#
 	print('saving model...')
 	if INF2 == None:
 		pickle.dump([initQ,probQ,Qscores,offQ,avgError,errorParams],open(OUF,'wb'))
 	else:
-		pickle.dump([initQ,probQ,initQ2,probQ2,Qscores,offQ,avgError,errorParams],open(OUF,'wb'))
+		pickle.dump([initQ,probQ,initQ2,probQ2,Qscores,offQ,avgError,errorParams],open(OUF, 'wb'))
 
 
 if __name__ == '__main__':
