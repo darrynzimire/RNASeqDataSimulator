@@ -87,4 +87,11 @@ def manpage():
 
 		)
 
-manpage()
+
+def main():
+
+	manpage()
+
+
+if __name__ == '__main__':
+	main()
