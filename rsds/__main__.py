@@ -35,29 +35,9 @@ h.setFormatter(f)
 errlog.addHandler(h)
 
 
-def usage():
-	print('\n\n------------------------------------------------------------------------')
-	print('- RSDS - RNA-Seq Data Simulator - ')
-	print('------------------------------------------------------------------------\n')
-	print('\nRSDS.py:\n')
-	print('Takes a sam file and catalogues all the mismatches, insertions, and deletions')
-	print('to create an error model for a particular sequencing run. Known true SNP')
-	print('\nOptions:')
-	print('      -h prints these instructions.')
-	print('      -r read length. Set to desired length for simulation.')
-	print('      -f reference transcriptome (cDNA sequences) in FASTA format')
-	print('      -s input file in sam format.')
-	print('      -o desired output filename prefix.')
-	print('      -i use only every ith read for model (optional, must be odd).')
-	print('      -m maximum indel size (optional, default = 4).')
-	print('      -p use only if your data contains paired end reads.')
-	print('      -k minimum k-mer frequency in reference. (Default = 0)')
-	print('      -e comma separated list of reference positions to exclude e.g. 293, 342\n\n')
-
-
 def get_arguments():
-	tool_description = 'Simulator for RNA-sequencing datasets to inform experimental design.'
-	parser = argparse.ArgumentParser(description=tool_description)
+
+	parser = argparse.ArgumentParser()
 
 	parser.add_argument('-r', type=int, required=False, default=101)
 	parser.add_argument('-n', type=int, required=False)
@@ -67,10 +47,10 @@ def get_arguments():
 	parser.add_argument('-q', type=str, required=False)
 	parser.add_argument('-c', type=str, required=False)
 	parser.add_argument('-er', type=float, required=False, default=-1)
-	parser.add_argument('-FL', nargs=2, type=int, required=False, default=(250, 25))
+	parser.add_argument('-fl', nargs=2, type=int, required=False, default=(250, 25))
 
-	parser.add_argument('-SE', action='store_true', required=False)
-	parser.add_argument('-PE', action='store_true', required=False)
+	parser.add_argument('-se', action='store_true', required=False)
+	parser.add_argument('-pe', action='store_true', required=False)
 
 	return parser
 
@@ -78,7 +58,7 @@ def get_arguments():
 argparser = get_arguments()
 args = argparser.parse_args()
 
-(fragment_size, fragment_std) = args.FL
+(fragment_size, fragment_std) = args.fl
 ref = args.f
 readlen = args.r
 readtot = args.n
@@ -87,7 +67,6 @@ output = args.o
 sqmodel = args.q
 countModel = args.c
 SE_RATE = args.er
-
 
 if ref == None:
 	sys.exit()
@@ -354,7 +333,7 @@ def main():
 		profile_counts.append(counts)
 		profile_propcount.append(propcount)
 
-	if args.SE:
+	if args.se:
 
 		sample_trans_ids = []
 		COUNTS = []
@@ -389,7 +368,6 @@ def main():
 				ID.append(id)
 				Seq.append(seq)
 		with gzip.open(output + '.fastq.gz', 'wb') as handle:
-			# data = chain.from_iterable(COUNTS[0])
 			for seq, r in zip(Seq, COUNTS[0]):
 
 				readinfo = GenerateRead(seq, readlen, r, 'SE')
@@ -397,20 +375,12 @@ def main():
 				endpos = readinfo[1]
 
 				for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
-					# length = j-i
-					# print(length)
-					# if length < readlen:
-					#     print(length)
-					# print(j-i)
-
 					header = sequence_identifier(index)
 					read = seq[int(i):int(j)]
-					# if len(read) < readlen:
-					#     print(len(read))
 					q = sample_qualscore(sequencingModel=sqmodel)
 					handle.write('{}\n{}\n+\n{}\n'.format(header, read, q).encode())
 
-	elif args.PE:
+	elif args.pe:
 
 		sample_trans_ids = []
 		RFS = []
