@@ -1,6 +1,6 @@
 # encoding = UTF-8
 
-import random
+
 import numpy as np
 import scipy as sp
 
