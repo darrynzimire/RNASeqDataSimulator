@@ -4,12 +4,14 @@ import os
 import sys
 import numpy as np
 import gzip
+import random
 from itertools import chain
 from Bio.Seq import Seq
 import pyfaidx
 from rsds import SequenceContainer
 from rsds import process_inputFiles
 from rsds import distributions, cigar
+from rsds import man
 import argparse
 import logging.handlers
 from datetime import datetime
@@ -54,9 +56,7 @@ def usage():
 
 
 def get_arguments():
-	tool_description = 'This tool creates a position-wise distribution of quality values from a fastq file ' \
-	                   'It creates a .qmodel.p file which can be passed to RSDS to simulate Phred quality scores.'
-
+	tool_description = 'Simulator for RNA-sequencing datasets to inform experimental design.'
 	parser = argparse.ArgumentParser(description=tool_description)
 
 	parser.add_argument('-r', type=int, required=False, default=101)
@@ -82,21 +82,25 @@ args = argparser.parse_args()
 ref = args.f
 readlen = args.r
 readtot = args.n
-SEED = args.s
+seed = args.s
 output = args.o
 sqmodel = args.q
 countModel = args.c
 SE_RATE = args.er
 
-errlog.info(print('reading reference file: ' + str(ref) + "\n"))
 
-pyfaidx.Faidx(ref)
-errlog.info(print('Indexing reference file....' + "\n"))
+if ref == None:
+	sys.exit()
+else:
 
-indexFile = ''
-for file in os.listdir('.'):
-	if file.endswith('.fai'):
-		indexFile = (os.path.join('.', file))
+	errlog.info(print('reading reference file: ' + str(ref) + "\n"))
+	pyfaidx.Faidx(ref)
+	errlog.info(print('Indexing reference file....' + "\n"))
+
+	indexFile = ''
+	for file in os.listdir('.'):
+		if file.endswith('.fai'):
+			indexFile = (os.path.join('.', file))
 
 
 def parseIndexRef(indexFile):
