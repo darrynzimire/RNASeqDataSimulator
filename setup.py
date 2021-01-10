@@ -29,11 +29,7 @@ setuptools.setup(
 	install_requires=["numpy", "matplotlib", "seaborn",
 					  "pyfaidx", "pandas", "biopython", "scipy",
 					  "scikit-learn", 'setuptools'],
-	package_data={
-		["quality_profiles/*.Qual.p",
-		 "toy_data/toy_ref.fa",
-		 "toy_data/toy.fastq"]
-	},
+
 	packages=setuptools.find_packages(),
 	entry_points={
 		'console_scripts': [
