@@ -328,10 +328,10 @@ def main():
 		pyfaidx.Faidx(ref)
 		errlog.info(print('Indexing reference file....' + "\n"))
 
-	indexFile = ''
-	for file in os.listdir('.'):
-		if file.endswith('.fai'):
-			indexFile = (os.path.join('.', file))
+		indexFile = 'toy_data/toy.ref.fa.fai'
+		# for file in os.listdir('.'):
+		# 	if file.endswith('.fai'):
+		# 		indexFile = (os.path.join('.', file))
 
 	ref_transcript_ids = parseIndexRef(indexFile)
 	NB_counts = distributions.negative_binomial()

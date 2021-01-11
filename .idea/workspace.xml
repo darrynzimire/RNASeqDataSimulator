@@ -2,9 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="08449e8d-e823-47c5-b972-3eaad8a88298" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/rsds/tools/testcode.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/rsds/toy_data/chr18.sam" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rsds/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/rsds/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rsds/tools/learn_FLmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/rsds/tools/learn_FLmodel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rsds/process_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/rsds/process_models.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rsds/__main__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4148">
-              <caret line="72" selection-start-line="72" selection-end-line="72" />
+            <state relative-caret-position="221">
+              <caret line="204" column="8" lean-forward="true" selection-start-line="204" selection-start-column="8" selection-end-line="204" selection-end-column="8" />
               <folding>
                 <element signature="e#18#27#0" expanded="true" />
               </folding>
@@ -29,8 +30,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="7" column="24" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="24" />
+            <state relative-caret-position="102">
+              <caret line="33" column="26" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
+              <folding>
+                <element signature="e#18#36#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -39,7 +43,7 @@
         <entry file="file://$PROJECT_DIR$/rsds/man.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="141">
-              <caret line="73" column="18" lean-forward="true" selection-start-line="73" selection-start-column="18" selection-end-line="73" selection-end-column="18" />
+              <caret line="73" column="18" selection-start-line="73" selection-start-column="18" selection-end-line="73" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -60,7 +64,7 @@
         <entry file="file://$PROJECT_DIR$/rsds/tools/learn_FLmodel.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1615">
-              <caret line="96" lean-forward="true" selection-start-line="96" selection-end-line="96" />
+              <caret line="96" selection-start-line="96" selection-end-line="96" />
               <folding>
                 <element signature="e#18#36#0" expanded="true" />
               </folding>
@@ -147,7 +151,6 @@
         <option value="$PROJECT_DIR$/rsds/SequenceContainer.py" />
         <option value="$PROJECT_DIR$/rsds/tools/__init__.py" />
         <option value="$PROJECT_DIR$/rsds/tools/Transcript_Expression_Profiling.py" />
-        <option value="$PROJECT_DIR$/rsds/process_models.py" />
         <option value="$PROJECT_DIR$/rsds/process_inputFiles.py" />
         <option value="$PROJECT_DIR$/rsds/distributions.py" />
         <option value="$PROJECT_DIR$/rsds/tools/learn_Qmodel.py" />
@@ -156,6 +159,7 @@
         <option value="$PROJECT_DIR$/rsds/tools/learn_FLmodel.py" />
         <option value="$PROJECT_DIR$/rsds/tools/testcode.py" />
         <option value="$PROJECT_DIR$/rsds/__main__.py" />
+        <option value="$PROJECT_DIR$/rsds/process_models.py" />
       </list>
     </option>
   </component>
@@ -212,27 +216,6 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.__main__">
-    <configuration name="Transcript_Expression_Profiling" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="GitRepo" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/rsds/tools" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/rsds/tools/Transcript_Expression_Profiling.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="__main__" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="GitRepo" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -246,7 +229,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/rsds/__main__.py" />
-      <option name="PARAMETERS" value="-r 100 -f toy_data/toy.ref.fa -n 10000 -q quality_profiles/High_Qual.p -fl chr1FLmodel_p.gzip -se -o testoutput" />
+      <option name="PARAMETERS" value="-r 100 -f toy_data/toy.ref.fa -n 10000 -q quality_profiles/High_Qual.p -fl tools/chr1FLmodel_p.gzip -pe -o testoutput" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -317,6 +300,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="process_models" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="GitRepo" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/rsds" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/rsds/process_models.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="testcode" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="GitRepo" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -343,16 +347,16 @@
       <item itemvalue="Python.__main__" />
       <item itemvalue="Python.learn_FLmodel (1)" />
       <item itemvalue="Python.learn_Qmodel" />
-      <item itemvalue="Python.Transcript_Expression_Profiling" />
       <item itemvalue="Python.testcode" />
+      <item itemvalue="Python.process_models" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.__main__" />
+        <item itemvalue="Python.process_models" />
         <item itemvalue="Python.learn_FLmodel (1)" />
         <item itemvalue="Python.testcode" />
         <item itemvalue="Python.learn_Qmodel" />
-        <item itemvalue="Python.Transcript_Expression_Profiling" />
       </list>
     </recent_temporary>
   </component>
@@ -668,7 +672,14 @@
       <option name="project" value="LOCAL" />
       <updated>1610318316965</updated>
     </task>
-    <option name="localTasksCounter" value="44" />
+    <task id="LOCAL-00044" summary="Index reference">
+      <created>1610395535288</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1610395535289</updated>
+    </task>
+    <option name="localTasksCounter" value="45" />
     <servers />
   </component>
   <component name="TodoView">
@@ -682,13 +693,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15848215" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925596" visible="true" weight="0.18821605" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925596" visible="true" weight="0.23567921" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -702,9 +714,28 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
+    <layout-to-restore>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.15848215" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49925596" visible="true" weight="0.45008183" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.3289689" />
+      <window_info anchor="bottom" id="Version Control" order="7" weight="0.049099836" />
+      <window_info anchor="bottom" id="Terminal" order="8" weight="0.3289689" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50074404" side_tool="true" weight="0.3289689" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.29459903" />
+      <window_info anchor="bottom" id="Messages" order="11" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout-to-restore>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="changes to setup.py file" />
     <MESSAGE value="rearranged the repository" />
     <MESSAGE value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;learn_FLmodel.py" />
     <MESSAGE value="made changes to the read in method" />
@@ -729,7 +760,8 @@
     <MESSAGE value="Updated code format and set man page to print when no arguments provided" />
     <MESSAGE value="Added main" />
     <MESSAGE value="removed package data attribute" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed package data attribute" />
+    <MESSAGE value="Index reference" />
+    <option name="LAST_COMMIT_MESSAGE" value="Index reference" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Transcript_Expression_Profiling.py" />
@@ -876,14 +908,7 @@
     <entry file="file://$PROJECT_DIR$/rsds/man.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="141">
-          <caret line="73" column="18" lean-forward="true" selection-start-line="73" selection-start-column="18" selection-end-line="73" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="7" column="24" selection-start-line="7" selection-start-column="23" selection-end-line="7" selection-end-column="24" />
+          <caret line="73" column="18" selection-start-line="73" selection-start-column="18" selection-end-line="73" selection-end-column="18" />
         </state>
       </provider>
     </entry>
@@ -900,7 +925,7 @@
     <entry file="file://$PROJECT_DIR$/rsds/tools/learn_FLmodel.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1615">
-          <caret line="96" lean-forward="true" selection-start-line="96" selection-end-line="96" />
+          <caret line="96" selection-start-line="96" selection-end-line="96" />
           <folding>
             <element signature="e#18#36#0" expanded="true" />
           </folding>
@@ -910,10 +935,20 @@
     <entry file="file://$PROJECT_DIR$/rsds/toy_data/toy.ref.fa">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
+    <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="33" column="26" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
+          <folding>
+            <element signature="e#18#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/rsds/__main__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4148">
-          <caret line="72" selection-start-line="72" selection-end-line="72" />
+        <state relative-caret-position="221">
+          <caret line="204" column="8" lean-forward="true" selection-start-line="204" selection-start-column="8" selection-end-line="204" selection-end-column="8" />
           <folding>
             <element signature="e#18#27#0" expanded="true" />
           </folding>

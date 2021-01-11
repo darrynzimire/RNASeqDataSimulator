@@ -3,25 +3,51 @@
 import numpy as np
 import pickle as pickle
 import itertools
+import gzip
+#
+
+#
+# def proc_FLmodel(file, n):
+#
+# 	f = gzip.open(file, 'r')
+# 	np.random.seed(1234)
+# 	modelled_dist = []
+# 	model = pickle.load(f, encoding='utf-8')
+# 	weights = model[0]
+# 	means = model[1]
+# 	covars = model[2]
+# 	# size = round(sum([i * n for i in weights]))
+# 	size = [int(np.round(i * n)) for i in weights]
+# 	for m, s in zip(means, covars):
+# 		N = np.round(np.exp(np.random.normal(loc=m, scale=s, size=size))).astype(int)
+# 		modelled_dist.append(N.flatten().tolist())
+# 	merged_dist = list(itertools.chain.from_iterable(modelled_dist))
+#
+# 	return merged_dist
+
 
 
 def proc_FLmodel(file, n):
 
+	f = gzip.open(file, 'r')
 	np.random.seed(1234)
-	modelled_dist = []
-	model = pickle.load(file)
-	weights = model[0].flatten()
-	means = model[1].flatten()
-	covars = model[2].flatten()
-	size = round(sum([i * n for i in weights]))
+	model = pickle.load(f)
+	mus = model[0]
+	sigma = np.sqrt(model[1])
+	weights = model[2]
+	size = [int(round(i * n)) for i in weights]
+	sample = []
+	np.random.seed(1234)
+	for m, sc, si in zip(mus, sigma, size):
+		#
+		N = np.random.normal(loc=m, scale=sc, size=si)
+		sample.append(N.tolist())
 
-	for m, s in zip(means, covars):
-		N = np.round(np.exp(np.random.normal(loc=m, scale=s, size=int(size)))).astype(int)
-		modelled_dist.append(N.flatten().tolist())
-	merged_dist = list(itertools.chain.from_iterable(modelled_dist))
+	merged_dist = list(map(int, itertools.chain.from_iterable(sample)))
+	merged_dist = np.array(merged_dist)
+	res = np.round(np.exp(merged_dist))
 
-	return merged_dist
-
+	return res
 
 def proc_tx_expmodel(model):
 
