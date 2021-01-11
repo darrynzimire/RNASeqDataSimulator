@@ -15,6 +15,8 @@ from rsds import man
 import argparse
 import logging.handlers
 from datetime import datetime
+from rsds import man
+from rsds import process_models
 
 if not sys.warnoptions:
 	import os, warnings
@@ -47,7 +49,8 @@ def get_arguments():
 	parser.add_argument('-q', type=str, required=False)
 	parser.add_argument('-c', type=str, required=False)
 	parser.add_argument('-er', type=float, required=False, default=-1)
-	parser.add_argument('-fl', nargs=2, type=int, required=False, default=(250, 25))
+	# parser.add_argument('-fl', nargs=2, type=int, required=False, default=(250, 25))
+	parser.add_argument('-fl', type=str, required=False)
 
 	parser.add_argument('-se', action='store_true', required=False)
 	parser.add_argument('-pe', action='store_true', required=False)
@@ -58,7 +61,7 @@ def get_arguments():
 argparser = get_arguments()
 args = argparser.parse_args()
 
-(fragment_size, fragment_std) = args.fl
+fl_model = args.fl
 ref = args.f
 readlen = args.r
 readtot = args.n
@@ -68,18 +71,20 @@ sqmodel = args.q
 countModel = args.c
 SE_RATE = args.er
 
-if ref == None:
-	sys.exit()
-else:
-
-	errlog.info(print('reading reference file: ' + str(ref) + "\n"))
-	pyfaidx.Faidx(ref)
-	errlog.info(print('Indexing reference file....' + "\n"))
-
-	indexFile = ''
-	for file in os.listdir('.'):
-		if file.endswith('.fai'):
-			indexFile = (os.path.join('.', file))
+# if ref == None:
+# 	man.manpage()
+# 	sys.exit()
+#
+# else:
+#
+# 	errlog.info(print('reading reference file: ' + str(ref) + "\n"))
+# 	pyfaidx.Faidx(ref)
+# 	errlog.info(print('Indexing reference file....' + "\n"))
+#
+# 	indexFile = ''
+# 	for file in os.listdir('.'):
+# 		if file.endswith('.fai'):
+# 			indexFile = (os.path.join('.', file))
 
 
 def parseIndexRef(indexFile):
@@ -312,9 +317,21 @@ start_time = datetime.now()
 
 
 def main():
-	if ref == '' or readlen == '':
-		usage()
-		sys.exit(2)
+
+	if ref == None:
+		man.manpage()
+		sys.exit()
+
+	else:
+
+		errlog.info(print('reading reference file: ' + str(ref) + "\n"))
+		pyfaidx.Faidx(ref)
+		errlog.info(print('Indexing reference file....' + "\n"))
+
+	indexFile = ''
+	for file in os.listdir('.'):
+		if file.endswith('.fai'):
+			indexFile = (os.path.join('.', file))
 
 	ref_transcript_ids = parseIndexRef(indexFile)
 	NB_counts = distributions.negative_binomial()
@@ -389,7 +406,9 @@ def main():
 		Seq = []
 		R1 = []
 		R2 = []
-		FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+		# FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+		FS = process_models.proc_FLmodel(fl_model, readtot)
+		print(FS[1:5])
 
 		if countModel == None:
 			errlog.info(print('Generating paired-end reads.....' + "\n"))
