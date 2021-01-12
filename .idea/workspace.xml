@@ -3,7 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="08449e8d-e823-47c5-b972-3eaad8a88298" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/rsds/toy_data/chr18.sam" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rsds/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/rsds/__main__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rsds/process_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/rsds/process_models.py" afterDir="false" />
     </list>
@@ -15,11 +14,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/rsds/__main__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="204" column="8" lean-forward="true" selection-start-line="204" selection-start-column="8" selection-end-line="204" selection-end-column="8" />
+            <state relative-caret-position="136">
+              <caret line="339" column="49" lean-forward="true" selection-start-line="339" selection-start-column="49" selection-end-line="339" selection-end-column="49" />
               <folding>
                 <element signature="e#18#27#0" expanded="true" />
               </folding>
@@ -27,11 +26,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="102">
-              <caret line="33" column="26" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
+            <state relative-caret-position="34">
+              <caret line="9" column="28" lean-forward="true" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
               <folding>
                 <element signature="e#18#36#0" expanded="true" />
               </folding>
@@ -215,7 +214,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.__main__">
+  <component name="RunManager" selected="Python.process_models">
     <configuration name="__main__" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="GitRepo" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -352,8 +351,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.__main__" />
         <item itemvalue="Python.process_models" />
+        <item itemvalue="Python.__main__" />
         <item itemvalue="Python.learn_FLmodel (1)" />
         <item itemvalue="Python.testcode" />
         <item itemvalue="Python.learn_Qmodel" />
@@ -679,7 +678,14 @@
       <option name="project" value="LOCAL" />
       <updated>1610395535289</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Added toy sam file">
+      <created>1610396588395</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1610396588395</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TodoView">
@@ -693,14 +699,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15848215" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17633928" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925596" visible="true" weight="0.23567921" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925596" visible="true" weight="0.18494272" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -736,7 +741,6 @@
     </layout-to-restore>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="rearranged the repository" />
     <MESSAGE value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;learn_FLmodel.py" />
     <MESSAGE value="made changes to the read in method" />
     <MESSAGE value="reformat to pep8" />
@@ -761,7 +765,8 @@
     <MESSAGE value="Added main" />
     <MESSAGE value="removed package data attribute" />
     <MESSAGE value="Index reference" />
-    <option name="LAST_COMMIT_MESSAGE" value="Index reference" />
+    <MESSAGE value="Added toy sam file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added toy sam file" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Transcript_Expression_Profiling.py" />
@@ -935,22 +940,22 @@
     <entry file="file://$PROJECT_DIR$/rsds/toy_data/toy.ref.fa">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
+    <entry file="file://$PROJECT_DIR$/rsds/__main__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="33" column="26" selection-start-line="33" selection-start-column="26" selection-end-line="33" selection-end-column="26" />
+        <state relative-caret-position="136">
+          <caret line="339" column="49" lean-forward="true" selection-start-line="339" selection-start-column="49" selection-end-line="339" selection-end-column="49" />
           <folding>
-            <element signature="e#18#36#0" expanded="true" />
+            <element signature="e#18#27#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/rsds/__main__.py">
+    <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="204" column="8" lean-forward="true" selection-start-line="204" selection-start-column="8" selection-end-line="204" selection-end-column="8" />
+        <state relative-caret-position="34">
+          <caret line="9" column="28" lean-forward="true" selection-start-line="9" selection-start-column="28" selection-end-line="9" selection-end-column="28" />
           <folding>
-            <element signature="e#18#27#0" expanded="true" />
+            <element signature="e#18#36#0" expanded="true" />
           </folding>
         </state>
       </provider>
