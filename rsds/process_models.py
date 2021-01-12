@@ -25,21 +25,19 @@ import gzip
 #
 # 	return merged_dist
 
-
-
 def proc_FLmodel(file, n):
 
 	f = gzip.open(file, 'r')
 	np.random.seed(1234)
 	model = pickle.load(f)
+	print(model)
 	mus = model[0]
 	sigma = np.sqrt(model[1])
 	weights = model[2]
 	size = [int(round(i * n)) for i in weights]
 	sample = []
-	np.random.seed(1234)
+
 	for m, sc, si in zip(mus, sigma, size):
-		#
 		N = np.random.normal(loc=m, scale=sc, size=si)
 		sample.append(N.tolist())
 
