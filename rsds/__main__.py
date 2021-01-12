@@ -17,6 +17,7 @@ import logging.handlers
 from datetime import datetime
 from rsds import man
 from rsds import process_models
+import tempfile
 
 if not sys.warnoptions:
 	import os, warnings
@@ -70,6 +71,7 @@ output = args.o
 sqmodel = args.q
 countModel = args.c
 SE_RATE = args.er
+
 
 # if ref == None:
 # 	man.manpage()
@@ -202,6 +204,7 @@ def getseq(key, start=1, end=None):
 
 
 def processTransIDs(ids):
+
 	""""
 	Description:
 	This function take as input a list of transcript ids and converts it to a dictionary
@@ -327,12 +330,13 @@ def main():
 		errlog.info(print('reading reference file: ' + str(ref) + "\n"))
 		pyfaidx.Faidx(ref)
 		errlog.info(print('Indexing reference file....' + "\n"))
-
-		indexFile = 'toy_data/toy.ref.fa.fai'
-		# for file in os.listdir('.'):
-		# 	if file.endswith('.fai'):
-		# 		indexFile = (os.path.join('.', file))
-
+		cwd = os.getcwd()
+		indexFile = ''
+		f = [os.path.join(path, name) for path, subdirs, files in os.walk(cwd) for name in files]
+		for i in f:
+			if i.endswith('.fai'):
+				indexFile = (os.path.join('.', i))
+		print(indexFile)
 	ref_transcript_ids = parseIndexRef(indexFile)
 	NB_counts = distributions.negative_binomial()
 	counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
