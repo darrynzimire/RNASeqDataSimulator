@@ -5,7 +5,10 @@ import sys
 import numpy as np
 import gzip
 import random
+<<<<<<< HEAD
 from itertools import chain
+=======
+>>>>>>> 00bd5810bdabb48cbc03169df7673c8680d6ca5c
 from Bio.Seq import Seq
 import pyfaidx
 from rsds import SequenceContainer
