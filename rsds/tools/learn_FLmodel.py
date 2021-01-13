@@ -69,18 +69,6 @@ def optimal_n_components(aic, n):
 
     return idx + 1
 
-# #
-# def model_fitting(data, n):
-#
-#     ll = [i - (index + 1) * 2 for index, i in enumerate(aic)]
-#     x = [i * percentage(1, n) + j for i, j in zip(ll, range(n_components + 1))]
-#     minimum = min(x)
-#
-#     final_data = [k - minimum for k in x]
-#     val, idx = min((val, idx) for (idx, val) in enumerate(final_data))
-#
-#     return idx + 1
-
 
 def model_fitting(data, n):
     
