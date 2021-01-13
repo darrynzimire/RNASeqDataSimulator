@@ -4,15 +4,20 @@ import os
 import sys
 import numpy as np
 import gzip
+import random
 from itertools import chain
 from Bio.Seq import Seq
 import pyfaidx
 from rsds import SequenceContainer
 from rsds import process_inputFiles
 from rsds import distributions, cigar
+from rsds import man
 import argparse
 import logging.handlers
 from datetime import datetime
+from rsds import man
+from rsds import process_models
+import tempfile
 
 if not sys.warnoptions:
 	import os, warnings
@@ -33,31 +38,9 @@ h.setFormatter(f)
 errlog.addHandler(h)
 
 
-def usage():
-	print('\n\n------------------------------------------------------------------------')
-	print('- RSDS - RNA-Seq Data Simulator - ')
-	print('------------------------------------------------------------------------\n')
-	print('\nRSDS.py:\n')
-	print('Takes a sam file and catalogues all the mismatches, insertions, and deletions')
-	print('to create an error model for a particular sequencing run. Known true SNP')
-	print('\nOptions:')
-	print('      -h prints these instructions.')
-	print('      -r read length. Set to desired length for simulation.')
-	print('      -f reference transcriptome (cDNA sequences) in FASTA format')
-	print('      -s input file in sam format.')
-	print('      -o desired output filename prefix.')
-	print('      -i use only every ith read for model (optional, must be odd).')
-	print('      -m maximum indel size (optional, default = 4).')
-	print('      -p use only if your data contains paired end reads.')
-	print('      -k minimum k-mer frequency in reference. (Default = 0)')
-	print('      -e comma separated list of reference positions to exclude e.g. 293, 342\n\n')
-
-
 def get_arguments():
-	tool_description = 'This tool creates a position-wise distribution of quality values from a fastq file ' \
-	                   'It creates a .qmodel.p file which can be passed to RSDS to simulate Phred quality scores.'
 
-	parser = argparse.ArgumentParser(description=tool_description)
+	parser = argparse.ArgumentParser()
 
 	parser.add_argument('-r', type=int, required=False, default=101)
 	parser.add_argument('-n', type=int, required=False)
@@ -67,10 +50,11 @@ def get_arguments():
 	parser.add_argument('-q', type=str, required=False)
 	parser.add_argument('-c', type=str, required=False)
 	parser.add_argument('-er', type=float, required=False, default=-1)
-	parser.add_argument('-FL', nargs=2, type=int, required=False, default=(250, 25))
+	# parser.add_argument('-fl', nargs=2, type=int, required=False, default=(250, 25))
+	parser.add_argument('-fl', type=str, required=False)
 
-	parser.add_argument('-SE', action='store_true', required=False)
-	parser.add_argument('-PE', action='store_true', required=False)
+	parser.add_argument('-se', action='store_true', required=False)
+	parser.add_argument('-pe', action='store_true', required=False)
 
 	return parser
 
@@ -78,25 +62,31 @@ def get_arguments():
 argparser = get_arguments()
 args = argparser.parse_args()
 
-(fragment_size, fragment_std) = args.FL
+fl_model = args.fl
 ref = args.f
 readlen = args.r
 readtot = args.n
-SEED = args.s
+seed = args.s
 output = args.o
 sqmodel = args.q
 countModel = args.c
 SE_RATE = args.er
 
-errlog.info(print('reading reference file: ' + str(ref) + "\n"))
 
-pyfaidx.Faidx(ref)
-errlog.info(print('Indexing reference file....' + "\n"))
-
-indexFile = ''
-for file in os.listdir('.'):
-	if file.endswith('.fai'):
-		indexFile = (os.path.join('.', file))
+# if ref == None:
+# 	man.manpage()
+# 	sys.exit()
+#
+# else:
+#
+# 	errlog.info(print('reading reference file: ' + str(ref) + "\n"))
+# 	pyfaidx.Faidx(ref)
+# 	errlog.info(print('Indexing reference file....' + "\n"))
+#
+# 	indexFile = ''
+# 	for file in os.listdir('.'):
+# 		if file.endswith('.fai'):
+# 			indexFile = (os.path.join('.', file))
 
 
 def parseIndexRef(indexFile):
@@ -214,6 +204,7 @@ def getseq(key, start=1, end=None):
 
 
 def processTransIDs(ids):
+
 	""""
 	Description:
 	This function take as input a list of transcript ids and converts it to a dictionary
@@ -329,10 +320,23 @@ start_time = datetime.now()
 
 
 def main():
-	if ref == '' or readlen == '':
-		usage()
-		sys.exit(2)
 
+	if ref == None:
+		man.manpage()
+		sys.exit()
+
+	else:
+
+		errlog.info(print('reading reference file: ' + str(ref) + "\n"))
+		pyfaidx.Faidx(ref)
+		errlog.info(print('Indexing reference file....' + "\n"))
+		cwd = os.getcwd()
+		indexFile = ''
+		f = [os.path.join(path, name) for path, subdirs, files in os.walk(cwd) for name in files]
+		for i in f:
+			if i.endswith('.fai'):
+				indexFile = (os.path.join('.', i))
+		print(indexFile)
 	ref_transcript_ids = parseIndexRef(indexFile)
 	NB_counts = distributions.negative_binomial()
 	counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
@@ -350,7 +354,7 @@ def main():
 		profile_counts.append(counts)
 		profile_propcount.append(propcount)
 
-	if args.SE:
+	if args.se:
 
 		sample_trans_ids = []
 		COUNTS = []
@@ -385,7 +389,6 @@ def main():
 				ID.append(id)
 				Seq.append(seq)
 		with gzip.open(output + '.fastq.gz', 'wb') as handle:
-			# data = chain.from_iterable(COUNTS[0])
 			for seq, r in zip(Seq, COUNTS[0]):
 
 				readinfo = GenerateRead(seq, readlen, r, 'SE')
@@ -393,20 +396,12 @@ def main():
 				endpos = readinfo[1]
 
 				for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
-					# length = j-i
-					# print(length)
-					# if length < readlen:
-					#     print(length)
-					# print(j-i)
-
 					header = sequence_identifier(index)
 					read = seq[int(i):int(j)]
-					# if len(read) < readlen:
-					#     print(len(read))
 					q = sample_qualscore(sequencingModel=sqmodel)
 					handle.write('{}\n{}\n+\n{}\n'.format(header, read, q).encode())
 
-	elif args.PE:
+	elif args.pe:
 
 		sample_trans_ids = []
 		RFS = []
@@ -415,7 +410,9 @@ def main():
 		Seq = []
 		R1 = []
 		R2 = []
-		FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+		# FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+		FS = process_models.proc_FLmodel(fl_model, readtot)
+		print(FS[1:5])
 
 		if countModel == None:
 			errlog.info(print('Generating paired-end reads.....' + "\n"))
