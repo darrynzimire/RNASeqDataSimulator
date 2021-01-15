@@ -11,12 +11,10 @@ import pyfaidx
 from rsds import SequenceContainer
 from rsds import process_inputFiles
 from rsds import distributions, cigar
-from rsds import man
 import argparse
 import logging.handlers
 from datetime import datetime
 from rsds import man
-from rsds import process_models
 import tempfile
 
 if not sys.warnoptions:
@@ -71,22 +69,6 @@ output = args.o
 sqmodel = args.q
 countModel = args.c
 SE_RATE = args.er
-
-
-# if ref == None:
-# 	man.manpage()
-# 	sys.exit()
-#
-# else:
-#
-# 	errlog.info(print('reading reference file: ' + str(ref) + "\n"))
-# 	pyfaidx.Faidx(ref)
-# 	errlog.info(print('Indexing reference file....' + "\n"))
-#
-# 	indexFile = ''
-# 	for file in os.listdir('.'):
-# 		if file.endswith('.fai'):
-# 			indexFile = (os.path.join('.', file))
 
 
 def parseIndexRef(indexFile):
@@ -337,7 +319,7 @@ def main():
 		for i in f:
 			if i.endswith('.fai'):
 				indexFile = (os.path.join('.', i))
-		print(indexFile)
+
 	ref_transcript_ids = parseIndexRef(indexFile)
 	NB_counts = distributions.negative_binomial()
 	counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
@@ -346,7 +328,7 @@ def main():
 	profile_counts = []
 	profile_ids = []
 	if args.c:
-		profile = process_inputFiles.process_countmodel(countModel)
+		profile = process_inputFiles.proc_tx_expmodel(countModel)
 		errlog.debug(print('detecting profile'))
 		ids = profile[0]
 		counts = profile[1]
@@ -381,7 +363,6 @@ def main():
 
 		elif countModel != None and readtot != None:
 			counts_s = np.rint(np.array([i * readtot for i in profile_propcount]) + 0.5).astype(int)
-			print(counts_s)
 			COUNTS.append(counts_s)
 			sample_trans_ids.append(profile_ids[0])
 		for j in sample_trans_ids:
@@ -412,8 +393,7 @@ def main():
 		R1 = []
 		R2 = []
 		# FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
-		FS = process_models.proc_FLmodel(fl_model, readtot)
-		print(FS[1:5])
+		FS = process_inputFiles.proc_FLmodel(fl_model, readtot).astype(int)
 
 		if countModel == None:
 			errlog.info(print('Generating paired-end reads.....' + "\n"))
