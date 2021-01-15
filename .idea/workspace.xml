@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="08449e8d-e823-47c5-b972-3eaad8a88298" name="Default Changelist" comment="">
+    <list default="true" id="08449e8d-e823-47c5-b972-3eaad8a88298" name="Default Changelist" comment="updated code format">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rsds/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/rsds/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rsds/process_models.py" beforeDir="false" afterPath="$PROJECT_DIR$/rsds/process_models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rsds/tools/chr1FLmodel_p.gzip" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/rsds/tools/learn_FLmodel.py" beforeDir="false" afterPath="$PROJECT_DIR$/rsds/tools/learn_FLmodel.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -12,45 +15,12 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rsds/__main__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-170">
-              <caret line="9" column="14" lean-forward="true" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="14" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="30" column="24" selection-start-line="30" selection-start-column="24" selection-end-line="30" selection-end-column="24" />
-              <folding>
-                <element signature="e#18#36#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rsds/tools/Transcript_Expression_Profiling.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="164">
-              <caret line="26" column="13" selection-start-line="26" selection-start-column="13" selection-end-line="26" selection-end-column="13" />
-              <folding>
-                <element signature="e#225#240#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
+    <leaf>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rsds/tools/learn_FLmodel.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-221">
-              <caret line="74" column="25" lean-forward="true" selection-start-line="74" selection-start-column="25" selection-end-line="74" selection-end-column="25" />
+            <state relative-caret-position="187">
+              <caret line="11" column="73" lean-forward="true" selection-start-line="11" selection-start-column="73" selection-end-line="11" selection-end-column="73" />
               <folding>
                 <element signature="e#18#36#0" expanded="true" />
               </folding>
@@ -59,22 +29,13 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/rsds/tools/learn_Qmodel.py">
+        <entry file="file://$PROJECT_DIR$/rsds/__main__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="20" column="18" selection-start-line="20" selection-start-column="18" selection-end-line="20" selection-end-column="18" />
+            <state>
+              <caret line="69" column="2" selection-start-line="69" selection-start-column="2" selection-end-line="69" selection-end-column="2" />
               <folding>
                 <element signature="e#18#27#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/setup.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="211">
-              <caret line="38" column="65" lean-forward="true" selection-start-line="38" selection-start-column="65" selection-end-line="38" selection-end-column="65" />
             </state>
           </provider>
         </entry>
@@ -148,6 +109,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -160,23 +122,10 @@
               <item name="GitRepo" type="462c0819:PsiDirectoryNode" />
               <item name="rsds" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="GitRepo" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GitRepo" type="462c0819:PsiDirectoryNode" />
-              <item name="rsds" type="462c0819:PsiDirectoryNode" />
-              <item name="tools" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="GitRepo" type="b2602c69:ProjectViewProjectNode" />
-              <item name="GitRepo" type="462c0819:PsiDirectoryNode" />
-              <item name="rsds" type="462c0819:PsiDirectoryNode" />
-              <item name="toy_data" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -217,7 +166,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="learn_FLmodel (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="learn_FLmodel (1)" type="PythonConfigurationType" factoryName="Python">
       <module name="GitRepo" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -230,7 +179,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/rsds/tools/learn_FLmodel.py" />
-      <option name="PARAMETERS" value="-f toy_data/chr18.sam -o chr18FLmodel" />
+      <option name="PARAMETERS" value="-f chr18.sam -o chr18FLmodel" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -324,15 +273,14 @@
     </configuration>
     <list>
       <item itemvalue="Python.man" />
-      <item itemvalue="Python.__main__" />
       <item itemvalue="Python.learn_FLmodel (1)" />
+      <item itemvalue="Python.__main__" />
       <item itemvalue="Python.learn_Qmodel" />
       <item itemvalue="Python.testcode" />
       <item itemvalue="Python.process_models" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.learn_FLmodel (1)" />
         <item itemvalue="Python.__main__" />
         <item itemvalue="Python.process_models" />
         <item itemvalue="Python.testcode" />
@@ -666,7 +614,14 @@
       <option name="project" value="LOCAL" />
       <updated>1610396588395</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="updated code format">
+      <created>1610567910078</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1610567910079</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TodoView">
@@ -681,12 +636,12 @@
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17633928" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17633928" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49925596" visible="true" weight="0.28968903" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" sideWeight="0.49925596" visible="true" weight="0.5253683" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -722,7 +677,6 @@
     </layout-to-restore>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Merge remote-tracking branch 'origin/master'&#10;&#10;# Conflicts:&#10;#&#9;learn_FLmodel.py" />
     <MESSAGE value="made changes to the read in method" />
     <MESSAGE value="reformat to pep8" />
     <MESSAGE value="commit to repository" />
@@ -747,7 +701,8 @@
     <MESSAGE value="removed package data attribute" />
     <MESSAGE value="Index reference" />
     <MESSAGE value="Added toy sam file" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added toy sam file" />
+    <MESSAGE value="updated code format" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated code format" />
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/Transcript_Expression_Profiling.py" />
@@ -866,7 +821,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rsds/tools/learn_Qmodel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
+        <state relative-caret-position="164">
           <caret line="20" column="18" selection-start-line="20" selection-start-column="18" selection-end-line="20" selection-end-column="18" />
           <folding>
             <element signature="e#18#27#0" expanded="true" />
@@ -901,16 +856,6 @@
     <entry file="file://$PROJECT_DIR$/rsds/toy_data/toy.ref.fa">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="30" column="24" selection-start-line="30" selection-start-column="24" selection-end-line="30" selection-end-column="24" />
-          <folding>
-            <element signature="e#18#36#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/rsds/tools/Transcript_Expression_Profiling.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="164">
@@ -921,17 +866,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/rsds/process_models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="354">
+          <caret line="31" lean-forward="true" selection-start-line="31" selection-end-line="31" />
+          <folding>
+            <element signature="e#18#36#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/rsds/__main__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-170">
-          <caret line="9" column="14" lean-forward="true" selection-start-line="9" selection-start-column="14" selection-end-line="9" selection-end-column="14" />
+        <state>
+          <caret line="69" column="2" selection-start-line="69" selection-start-column="2" selection-end-line="69" selection-end-column="2" />
+          <folding>
+            <element signature="e#18#27#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/rsds/tools/learn_FLmodel.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-221">
-          <caret line="74" column="25" lean-forward="true" selection-start-line="74" selection-start-column="25" selection-end-line="74" selection-end-column="25" />
+        <state relative-caret-position="187">
+          <caret line="11" column="73" lean-forward="true" selection-start-line="11" selection-start-column="73" selection-end-line="11" selection-end-column="73" />
           <folding>
             <element signature="e#18#36#0" expanded="true" />
           </folding>

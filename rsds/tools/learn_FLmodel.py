@@ -44,7 +44,7 @@ def process_SAM(infile):
             POS.append(i)
     
     data = np.array(POS)
-    print(str(samFile) + 'contains approximately ' + str(len(data)) + 'observations ')
+    print(str(samFile) + ' contains approximately ' + str(len(data)) + ' observations ')
     datalog = np.log(data)
     data2log = datalog.reshape(-1, 1)
 
@@ -73,12 +73,11 @@ def optimal_n_components(aic, n):
 def model_fitting(data, n):
     
     total_obs = len(data)
-    print(total_obs)
+
     aic = []
     bic = []
     n_components_range = range(1, n + 1)
-    print(n_components_range)
-    print('fitting GMM to data....')
+    print('fitting Gaussian Mixture models to data....')
     for n_components in n_components_range:
         gmm = GMM(n_components=n_components, covariance_type='full')
         gmm.fit(data)
@@ -86,21 +85,17 @@ def model_fitting(data, n):
         aic.append(gmm.aic(data))
         bic.append(gmm.bic(data))
 
-    # N = optimal_n_components(aic, len(data))
     print('evaluating goodness of fit....')
-    print(aic)
 
     N = optimal_n_components(aic, total_obs)
-    print(N)
-
     gmm = GMM(n_components=N, covariance_type='full')
     clf = gmm.fit(data)
     mus = clf.means_
     sigmas = clf.covariances_
     weights = clf.weights_
     print('Writing model to disk....')
-    model = [[mus, sigmas, weights], aic, bic]
-    #
+    model = [mus, sigmas, weights, aic, bic]
+
     return model
 
 
@@ -110,7 +105,7 @@ start_time = datetime.now()
 def main():
 
     FL_model = model_fitting(process_SAM(samFile), components)
-    modelName = outfile + '_p.gzip'
+    modelName = outfile + '_p.gz'
     g = gzip.open(modelName, 'wb')
     pickle.dump(FL_model, g)
     print('Finished!')

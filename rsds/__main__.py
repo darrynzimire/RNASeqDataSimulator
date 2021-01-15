@@ -301,6 +301,7 @@ def get_reads(record):
 
 
 def process_reads_PE(fragment, index):
+
 	R1 = []
 	R2 = []
 	prob = str(np.random.rand(1)).lstrip('[').rstrip(']')
