@@ -9,15 +9,18 @@ from datetime import datetime
 
 
 parser = argparse.ArgumentParser(description='fragment length distribution modelling')
-parser.add_argument('-f', type=str, required=True, help='Input SAM file')
-parser.add_argument('-n', type=int, required=False, default=10, help='Number of components')
-parser.add_argument('-o', type=str, required=True, help='Output file prefix')
+parser.add_argument('-f', type=str, required=True,                  help='Input SAM file')
+parser.add_argument('-n', type=int, required=False, default=10,     help='Number of components')
+parser.add_argument('-o', type=str, required=True,                  help='Output file prefix')
+parser.add_argument('-p', type=int, required=False, default=10,     help='Penalty for AIC')
+
 
 args = parser.parse_args()
 
 samFile = args.f
 components = args.n
 outfile = args.o
+pct = args.p
 
 
 def process_SAM(infile):
@@ -61,7 +64,7 @@ def optimal_n_components(aic, n):
     n_components = len(aic)
 
     ll = [i - (index + 1) * 2 for index, i in enumerate(aic)]
-    x = [i * percentage(10, n) + j for i, j in zip(ll, range(n_components + 1))]
+    x = [i * percentage(pct, n) + j for i, j in zip(ll, range(n_components + 1))]
     minimum = min(x)
 
     N = [k - minimum for k in x]
