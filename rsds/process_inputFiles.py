@@ -36,17 +36,18 @@ def proc_tx_expmodel(model):
 	transcript_ID = []
 	transcript_count = []
 	transcript_propcount = []
-	file = open(model, 'rb')
-	profile = list(pickle.load(file, encoding='latin1'))
-	profile = [list(i) for i in profile]
+	file = gzip.open(model, 'rb')
+	profile = pickle.load(file, encoding='latin1')
 
 	for i in profile:
-		transcript_id = tuple(i[0:3])
-		transcript_count = i[3]
-		transcript_propcount = i[4]
-		transcript_ID.append(transcript_id)
-		transcript_count.append(transcript_count)
-		transcript_propcount.append(transcript_propcount)
+		rec_id = i[0]
+		trans_id = rec_id.split('|')
+		id = (trans_id[0], i[1], i[2])
+		transcript_ID.append(id)
+		rec_counts = np.rint(i[3]).astype(int)
+		transcript_count.append(rec_counts)
+		rec_propcount = i[4]
+		transcript_propcount.append(rec_propcount)
 
 	return transcript_ID, transcript_count, transcript_propcount
 
