@@ -6,14 +6,13 @@ transcript ids and its associated count in a pickled gzip compressed file.
 
 """
 
-
 import argparse
 import os
 import pandas as pd
 import pickle as pickle
 import pyfaidx
 import re
-
+import gzip
 
 parser = argparse.ArgumentParser(description='Tissue_expression_profiler')
 parser.add_argument('-f',           type=str,        required=True,        metavar='<str>',       help='reference file')
@@ -77,7 +76,7 @@ def process_readcounts(count_table):
 	# What is the relationship between the zero-values and the values close to zero?
 	# How many of the zero values do we want change with respect to the SD?
 
-	df_count_table = pd.read_csv(count_table, sep='\t')
+	df_count_table = pd.read_csv(count_table, sep=',')
 	df1 = df_count_table[df_count_table.IsoPct != 0]
 	df1.drop(df1.index)
 	read_counts = df1['expected_count'].tolist()
@@ -96,6 +95,8 @@ def create_model(ref):
 	total = df_result['expected_count'].sum()
 	df_result['proportional_count'] = df_result['expected_count'].div(total)
 
+	return df_result
+
 
 def main():
 
@@ -106,8 +107,8 @@ def main():
 	model = create_model(ref)
 	records = model.to_records(index=False)
 
-	outf = modelName + '.p'
-	output = open(outf, 'wb')
+	outf = modelName + '_p.gz'
+	output = gzip.open(outf, 'wb')
 	pickle.dump(records, output)
 	pickle.dump(categories, output)
 
