@@ -1,6 +1,7 @@
 # encoding=utf-8
 
-import os
+
+import os, warnings
 import sys
 import numpy as np
 import gzip
@@ -17,8 +18,8 @@ from datetime import datetime
 from rsds import man
 import tempfile
 
+
 if not sys.warnoptions:
-	import os, warnings
 
 	warnings.simplefilter("default")  # Change the filter in this process
 	os.environ["PYTHONWARNINGS"] = "default"  # Also affect subprocesses
@@ -323,19 +324,7 @@ def main():
 	ref_transcript_ids = parseIndexRef(indexFile)
 	NB_counts = distributions.negative_binomial()
 	counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
-
-	profile_propcount = []
-	profile_counts = []
-	profile_ids = []
-	if args.c:
-		profile = process_inputFiles.proc_tx_expmodel(countModel)
-		errlog.debug(print('detecting profile'))
-		ids = profile[0]
-		counts = profile[1]
-		propcount = profile[2]
-		profile_ids.append(ids)
-		profile_counts.append(counts)
-		profile_propcount.append(propcount)
+	profile = process_inputFiles.proc_tx_expmodel(countModel)
 
 	if args.se:
 
@@ -358,13 +347,15 @@ def main():
 			errlog.info(print('Detected transcript profile model.....' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile' + "\n"))
 
-			sample_trans_ids.append(profile_ids[0])
-			COUNTS.append(profile_counts[0])
+			sample_trans_ids.append(profile[0])
+			COUNTS.append(profile[1])
 
 		elif countModel != None and readtot != None:
-			counts_s = np.rint(np.array([i * readtot for i in profile_propcount]) + 0.5).astype(int)
+			# counts_s = np.rint(np.array([i * readtot for i in profile_propcount]) + 0.5).astype(int)
+			counts_s = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS.append(counts_s)
-			sample_trans_ids.append(profile_ids[0])
+			sample_trans_ids.append(profile[0])
+
 		for j in sample_trans_ids:
 			p = processTransIDs(j)
 			for id, seq in p.items():
@@ -405,15 +396,16 @@ def main():
 		elif countModel != None and readtot == None:
 			errlog.info(print('Generating paired-end reads' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile.....' + "\n"))
-			COUNTS_P.append(profile_counts[0])
-			sample_trans_ids.append(profile_ids[0])
+			COUNTS_P.append(profile[1])
+			sample_trans_ids.append(profile[0])
 
 		elif countModel != None and readtot != None:
 			errlog.info(print('Generating paired-end reads' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile.....' + "\n"))
-			counts_p = scalereadnum(profile_propcount[0], readtot)
+			# counts_p = scalereadnum(profile_propcount[0], readtot)
+			counts_p = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS_P.append(counts_p)
-			sample_trans_ids.append(profile_ids[0])
+			sample_trans_ids.append(profile[0])
 
 		for i in COUNTS_P[0]:
 			randomFS = random.choices(FS, k=i)
