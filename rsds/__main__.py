@@ -49,7 +49,7 @@ def get_arguments():
 	parser.add_argument('-q', type=str, required=False)
 	parser.add_argument('-c', type=str, required=False)
 	parser.add_argument('-er', type=float, required=False, default=-1)
-	# parser.add_argument('-fl', nargs=2, type=int, required=False, default=(250, 25))
+	parser.add_argument('-mm', nargs=2, type=int, required=False, default=(250, 25))
 	parser.add_argument('-fl', type=str, required=False)
 
 	parser.add_argument('-se', action='store_true', required=False)
@@ -61,6 +61,7 @@ def get_arguments():
 argparser = get_arguments()
 args = argparser.parse_args()
 
+(fragment_size, fragment_std) = args.mm
 fl_model = args.fl
 ref = args.f
 readlen = args.r
@@ -408,7 +409,21 @@ def main():
 			counts_p = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS_P.append(counts_p)
 			sample_trans_ids.append(profile[0])
+		
+		if fl_model != None:
+			
+			FS = process_inputFiles.proc_FLmodel(fl_model, readtot).astype(int)
+			for i in COUNTS_P[0]:
+				randomFS = random.choices(FS, k=i)
+				RFS.append(randomFS)
+				
+		else:
+			FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+			for i in COUNTS_P[0]:
+					randomFS = random.choices(FS, k=i)
+					RFS.append(randomFS)
 
+		
 		for i in COUNTS_P[0]:
 			randomFS = random.choices(FS, k=i)
 			RFS.append(randomFS)
