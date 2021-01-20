@@ -324,8 +324,7 @@ def main():
 	ref_transcript_ids = parseIndexRef(indexFile)
 	NB_counts = distributions.negative_binomial()
 	counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
-	profile = process_inputFiles.proc_tx_expmodel(countModel)
-
+	
 	if args.se:
 
 		sample_trans_ids = []
@@ -346,12 +345,13 @@ def main():
 			errlog.info(print('Simulating single-end reads....' + "\n"))
 			errlog.info(print('Detected transcript profile model.....' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile' + "\n"))
-
+			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			sample_trans_ids.append(profile[0])
 			COUNTS.append(profile[1])
 
 		elif countModel != None and readtot != None:
 			# counts_s = np.rint(np.array([i * readtot for i in profile_propcount]) + 0.5).astype(int)
+			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			counts_s = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS.append(counts_s)
 			sample_trans_ids.append(profile[0])
@@ -396,6 +396,7 @@ def main():
 		elif countModel != None and readtot == None:
 			errlog.info(print('Generating paired-end reads' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile.....' + "\n"))
+			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			COUNTS_P.append(profile[1])
 			sample_trans_ids.append(profile[0])
 
@@ -403,6 +404,7 @@ def main():
 			errlog.info(print('Generating paired-end reads' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile.....' + "\n"))
 			# counts_p = scalereadnum(profile_propcount[0], readtot)
+			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			counts_p = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS_P.append(counts_p)
 			sample_trans_ids.append(profile[0])
