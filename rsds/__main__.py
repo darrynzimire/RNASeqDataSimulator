@@ -432,6 +432,8 @@ def main():
 
 		if fl_model != None:
 			FS = process_inputFiles.proc_FLmodel(fl_model, readtot).astype(int)
+			print(min(FS))
+			print(max(FS))
 			for i in COUNTS_P[0]:
 					randomFS = random.choices(FS, k=i)
 					RFS.append(randomFS)

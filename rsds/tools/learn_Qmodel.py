@@ -69,13 +69,21 @@ def parseFQ(inf):
 				totalQ[i][prevQ,q] += 1
 				priorQ[i][q] += 1
 			prevQ = q
-
+		
 		rRead += 1
-		if rRead%PRINT_EVERY == 0:
-			print(rRead)
+		if rRead % PRINT_EVERY == 0:
+			print("\r Analysing {:>10} reads".format(rRead), end="")
+		
 		if MAX_READS > 0 and rRead >= MAX_READS:
 			break
 	f.close()
+	#
+	# rRead += 1
+	# 	if rRead%PRINT_EVERY == 0:
+	# 		print(rRead)
+	# 	if MAX_READS > 0 and rRead >= MAX_READS:
+	# 		break
+	# f.close()
 
 	print('computing probabilities...')
 	probQ  = [None] + [[[0. for m in range(RQ)] for n in range(RQ)] for p in range(actual_readlen-1)]
@@ -133,7 +141,7 @@ def parseFQ(inf):
 parser = argparse.ArgumentParser(description='learn-qmodel.py')
 parser.add_argument('-i',  type=str, required=True,  metavar='<str>',                      help="* input_read1.fq (.gz)")
 parser.add_argument('-o',  type=str, required=True,  metavar='<str>',                      help="* output.p")
-# parser.add_argument('-i2', type=str, required=False, metavar='<str>',     default=None,    help="input_read2.fq (.gz) / input_read2.sam")
+parser.add_argument('-i2', type=str, required=False, metavar='<str>',     default=None,    help="input_read2.fq (.gz) / input_read2.sam")
 parser.add_argument('-p',  type=str, required=False, metavar='<str>',     default=None,    help="input_alignment.pileup")
 parser.add_argument('-q',  type=int, required=False, metavar='<int>',     default=33,      help="quality score offset [33]")
 parser.add_argument('-Q',  type=int, required=False, metavar='<int>',     default=41,      help="maximum quality score [41]")
