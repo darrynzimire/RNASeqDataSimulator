@@ -17,7 +17,7 @@ import logging.handlers
 from datetime import datetime
 from rsds import man
 import time
-from rsds import Validator
+# from rsds import Validator
 from pathlib import Path
 
 
