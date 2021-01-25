@@ -6,7 +6,7 @@ import sys
 import numpy as np
 import gzip
 import random
-from itertools import chain
+import itertools
 from Bio.Seq import Seq
 import pyfaidx
 from rsds import SequenceContainer
@@ -16,7 +16,9 @@ import argparse
 import logging.handlers
 from datetime import datetime
 from rsds import man
-import tempfile
+import time
+from rsds import Validator
+from pathlib import Path
 
 
 if not sys.warnoptions:
@@ -49,7 +51,7 @@ def get_arguments():
 	parser.add_argument('-q', type=str, required=False)
 	parser.add_argument('-c', type=str, required=False)
 	parser.add_argument('-er', type=float, required=False, default=-1)
-	# parser.add_argument('-fl', nargs=2, type=int, required=False, default=(250, 25))
+	parser.add_argument('-mm', nargs=2, type=int, required=False, default=(250, 25))
 	parser.add_argument('-fl', type=str, required=False)
 
 	parser.add_argument('-se', action='store_true', required=False)
@@ -61,6 +63,7 @@ def get_arguments():
 argparser = get_arguments()
 args = argparser.parse_args()
 
+(fragment_size, fragment_std) = args.mm
 fl_model = args.fl
 ref = args.f
 readlen = args.r
@@ -312,19 +315,32 @@ def main():
 	else:
 
 		errlog.info(print('reading reference file: ' + str(ref) + "\n"))
-		pyfaidx.Faidx(ref)
 		errlog.info(print('Indexing reference file....' + "\n"))
+
+		# First check if the working directory have permission to create a symlink
+		# Check if working directory has reading permission
+		# cwd = os.getcwd()
+		# Use basename of the input reference FASTA as prefix for the symlink
+		# check if windows is the OS, if TRUE print(info) output
+		# check if the reference file in wd, if FALSE, print(info) exit
+		
+		# try:
+		# 	Validator
+		#
+		# except OSError: print('You do not have permission to write or read in this directory. \n'
+		# 					  'Please copy the reference FASTA file into your current working directory and re-run')
+		#
+		# folder_time = datetime.now().strftime('%Y-%m-%d_%I:%M:%S')
+		basename = str(os.path.basename(output))
+		os.symlink(ref, basename)
+		pyfaidx.Faidx(basename)
 		cwd = os.getcwd()
 		indexFile = ''
-		f = [os.path.join(path, name) for path, subdirs, files in os.walk(cwd) for name in files]
-		for i in f:
-			if i.endswith('.fai'):
-				indexFile = (os.path.join('.', i))
-
+		for file in os.listdir(cwd):
+			if file.endswith('.fai'):
+				indexFile = (os.path.join('.', file))
+		
 	ref_transcript_ids = parseIndexRef(indexFile)
-	NB_counts = distributions.negative_binomial()
-	counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
-	profile = process_inputFiles.proc_tx_expmodel(countModel)
 
 	if args.se:
 
@@ -337,6 +353,9 @@ def main():
 			errlog.info(print('Simulating single-end reads....' + "\n"))
 			errlog.info(print('No transcript profile model detected!!' + "\n"))
 			errlog.info(print('Simulating default transcript profile' + "\n"))
+
+			NB_counts = distributions.negative_binomial()
+			counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
 			scaled_counts = scalereadnum(counts_NB, readtot)
 			samptransids = random.choices(ref_transcript_ids, k=len(scaled_counts))
 			sample_trans_ids.append(samptransids)
@@ -347,11 +366,13 @@ def main():
 			errlog.info(print('Detected transcript profile model.....' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile' + "\n"))
 
+			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			sample_trans_ids.append(profile[0])
 			COUNTS.append(profile[1])
 
 		elif countModel != None and readtot != None:
 			# counts_s = np.rint(np.array([i * readtot for i in profile_propcount]) + 0.5).astype(int)
+			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			counts_s = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS.append(counts_s)
 			sample_trans_ids.append(profile[0])
@@ -383,12 +404,13 @@ def main():
 		Seq = []
 		R1 = []
 		R2 = []
-		# FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
-		FS = process_inputFiles.proc_FLmodel(fl_model, readtot).astype(int)
 
 		if countModel == None:
 			errlog.info(print('Generating paired-end reads.....' + "\n"))
 			errlog.info(print('Sampling counts from negative binomial model' + "\n"))
+
+			NB_counts = distributions.negative_binomial()
+			counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
 			counts_p = scalereadnum(counts_NB, readtot)
 			COUNTS_P.append(counts_p)
 			sample_trans_ids.append(random.choices(ref_transcript_ids, k=len(COUNTS_P[0])))
@@ -396,23 +418,32 @@ def main():
 		elif countModel != None and readtot == None:
 			errlog.info(print('Generating paired-end reads' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile.....' + "\n"))
+			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			COUNTS_P.append(profile[1])
 			sample_trans_ids.append(profile[0])
 
 		elif countModel != None and readtot != None:
 			errlog.info(print('Generating paired-end reads' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile.....' + "\n"))
-			# counts_p = scalereadnum(profile_propcount[0], readtot)
+			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			counts_p = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS_P.append(counts_p)
 			sample_trans_ids.append(profile[0])
 
-		for i in COUNTS_P[0]:
-			randomFS = random.choices(FS, k=i)
-			RFS.append(randomFS)
+		if fl_model != None:
+			FS = process_inputFiles.proc_FLmodel(fl_model, readtot).astype(int)
+			for i in COUNTS_P[0]:
+					randomFS = random.choices(FS, k=i)
+					RFS.append(randomFS)
+		else:
+			FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+			for i in COUNTS_P[0]:
+					randomFS = random.choices(FS, k=i)
+					RFS.append(randomFS)
 
-		for j in sample_trans_ids:
-			p = processTransIDs(j)
+		data = list(itertools.chain.from_iterable(sample_trans_ids))
+		for j in data:
+			p = processTransIDs([j])
 			for id, seq in p.items():
 				ID.append(id)
 				Seq.append(seq)
@@ -433,6 +464,9 @@ def main():
 				f1.write('{}\n{}\n+\n{}\n'.format(id, i, q1).encode())
 				q2 = sample_qualscore(sequencingModel=sqmodel)
 				f2.write('{}\n{}\n+\n{}\n'.format(id, j, q2).encode())
+	os.remove(basename)
+	os.remove(indexFile)
+
 	errlog.info(print('Simulation is complete'))
 	end_time = datetime.now()
 	print('Duration: {}'.format(end_time - start_time))
