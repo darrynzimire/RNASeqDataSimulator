@@ -193,9 +193,9 @@ def main():
     
     print('saving model...')
     if INF2 == None:
-        pickle.dump([initQ, probQ, Qscores, offQ, avgError, errorParams], open(OUF, 'wb'))
+        pickle.dump([initQ, probQ, Qscores, offQ, avgError, errorParams], open(OUF + '.p', 'wb'))
     else:
-        pickle.dump([initQ, probQ, initQ2, probQ2, Qscores, offQ, avgError, errorParams], open(OUF, 'wb'))
+        pickle.dump([initQ, probQ, initQ2, probQ2, Qscores, offQ, avgError, errorParams], open(OUF + '.p', 'wb'))
 
 
 if __name__ == '__main__':
