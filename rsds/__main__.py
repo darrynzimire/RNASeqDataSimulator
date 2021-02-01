@@ -1,4 +1,4 @@
- # encoding=utf-8
+# encoding=utf-8
 
 
 import os, warnings
@@ -16,13 +16,12 @@ import argparse
 import logging.handlers
 from datetime import datetime
 from rsds import man
+import cProfile as profiler
 import time
 # from rsds import Validator
 from pathlib import Path
 
-
 if not sys.warnoptions:
-
 	warnings.simplefilter("default")  # Change the filter in this process
 	os.environ["PYTHONWARNINGS"] = "default"  # Also affect subprocesses
 	warnings.simplefilter("ignore", ResourceWarning)
@@ -40,31 +39,29 @@ errlog.addHandler(h)
 
 
 def get_arguments():
-
 	parser = argparse.ArgumentParser()
-
-	parser.add_argument('-r', type=int, required=False, default=101)
-	parser.add_argument('-n', type=int, required=False)
-	parser.add_argument('-f', type=str, required=False)
-	parser.add_argument('-s', type=int, required=False, default=1223)
-	parser.add_argument('-o', type=str, required=False)
-	parser.add_argument('-q', type=str, required=False)
-	parser.add_argument('-c', type=str, required=False)
-	parser.add_argument('-er', type=float, required=False, default=-1)
-	parser.add_argument('-mm', nargs=2, type=int, required=False, default=(250, 25))
-	parser.add_argument('-fl', type=str, required=False)
-
+	
+	parser.add_argument('-r', 	type=int, 		required=False, 	default=101)
+	parser.add_argument('-n', 	type=int, 		required=False)
+	parser.add_argument('-f', 	type=str, 		required=False)
+	parser.add_argument('-s', 	type=int, 		required=False, 	default=1223)
+	parser.add_argument('-o', 	type=str, 		required=False)
+	parser.add_argument('-q', 	type=str, 		required=False)
+	parser.add_argument('-c', 	type=str, 		required=False)
+	parser.add_argument('-er',	type=float, 	required=False, 	default=-1)
+	parser.add_argument('-fl',	nargs=2, 		 					default=(250, 25))
+	parser.add_argument('-flm', type=str, 			required=False)
 	parser.add_argument('-se', action='store_true', required=False)
 	parser.add_argument('-pe', action='store_true', required=False)
-
+	
 	return parser
 
 
 argparser = get_arguments()
 args = argparser.parse_args()
 
-(fragment_size, fragment_std) = args.mm
-fl_model = args.fl
+(fragment_size, fragment_std) = args.fl
+fragmodel = args.flm
 ref = args.f
 readlen = args.r
 readtot = args.n
@@ -86,15 +83,15 @@ def parseIndexRef(indexFile):
 	"""
 	ref_inds = []
 	filt_ref_inds = []
-
+	
 	try:
-
+		
 		fai = open(indexFile, 'r')
 	except BaseException:
 		print()
 		errlog.error('Cannot find indexed reference file. Please provide a reference FASTA file')
 		sys.exit('Cannot find indexed reference file. Please provide a reference FASTA file')
-
+	
 	for line in fai:
 		splt = line[:-1].split('\t')
 		header = '@' + splt[0]
@@ -102,7 +99,7 @@ def parseIndexRef(indexFile):
 		offset = int(splt[2])
 		lineLn = int(splt[3])
 		nLines = seqLen / lineLn
-
+		
 		if seqLen % lineLn != 0:
 			nLines += 1
 		ref_inds.append([header, offset, offset + seqLen + nLines, seqLen])
@@ -124,7 +121,7 @@ def samplingtranscripts(ids):
 	random.seed(seed)
 	numreads = readtot
 	sampledtranscripts = random.sample(ids, numreads)
-
+	
 	return sampledtranscripts
 
 
@@ -139,7 +136,7 @@ def scalereadnum(read_counts, n):
 		y = n * i
 		sc.append(round(y))
 	scaled_counts = [1 if x == 0 else x for x in sc]
-
+	
 	return scaled_counts
 
 
@@ -153,20 +150,20 @@ def getseq(key, start=1, end=None):
 		end:
 	Returns:
 	"""
-
+	
 	if end != None and end < start:
 		return ""
 	start -= 1
 	seek = start
-
+	
 	# if seek is past sequence then return empty sequence
 	if seek >= end:
 		return ""
-
+	
 	# seek to beginning
 	infile = open(ref, 'r')
 	infile.seek(seek)
-
+	
 	# read until end of sequence
 	header = ''
 	seq = []
@@ -174,7 +171,7 @@ def getseq(key, start=1, end=None):
 		lenNeeded = util.INF
 	else:
 		lenNeeded = end - start
-
+	
 	len2 = 0
 	while len2 < lenNeeded:
 		line = infile.readline()
@@ -190,7 +187,6 @@ def getseq(key, start=1, end=None):
 
 
 def processTransIDs(ids):
-
 	""""
 	Description:
 	This function take as input a list of transcript ids and converts it to a dictionary
@@ -198,7 +194,7 @@ def processTransIDs(ids):
 		ids (list of tuples): List of transcript ids
 	Returns: The function returns a dictionary of transcript id as key and start and end position as value
 	"""
-
+	
 	Transseq = []
 	header = []
 	transcriptID = {i: [j, k] for i, j, k in ids}
@@ -211,7 +207,7 @@ def processTransIDs(ids):
 		end = i[1]
 		seq = getseq(ID, start, end)
 		Transseq.append(seq)
-
+	
 	new_dict = {k: v for k, v in zip(header, Transseq)}
 	return new_dict
 
@@ -226,31 +222,31 @@ def GenerateRead(seq, readLen, n, *args):
 
 	:return: The function returns a list of all truncated sequences
 	"""
-
+	
 	seqLen = len(seq)
-
+	
 	spos = []
 	epos = []
 	for ag in args:
-
+		
 		if ag == 'SE':
-
+			
 			nmax = seqLen - readLen - 1
 			v = np.round(np.random.uniform(low=0, high=nmax, size=n))
 			startpos = list(random.choices(v, k=n))
 			endpos = [i + readLen for i in startpos]
 			spos.append(startpos)
 			epos.append(endpos)
-
+		
 		elif ag == 'PE':
-
+			
 			nmax = [seqLen - i - 1 for i in readLen]
 			v = np.round(np.random.uniform(low=0, high=nmax, size=None))
 			startpos = list(random.choices(v, k=len(readLen)))
 			endpos = [i + j for i, j in zip(startpos, readLen)]
 			spos.append(startpos)
 			epos.append(endpos)
-
+	
 	return spos, epos
 
 
@@ -265,7 +261,7 @@ SE_CLASS = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
 
 def sample_qualscore(sequencingModel):
 	(myQual, myErrors) = SE_CLASS.getSequencingErrors(sequencingModel)
-
+	
 	return myQual
 
 
@@ -282,12 +278,11 @@ def get_reads(record):
 	for s, e in zip(start, end):
 		r = sequence[int(s):int(e)]
 		reads.append(r)
-
+	
 	return reads
 
 
 def process_reads_PE(fragment, index):
-
 	R1 = []
 	R2 = []
 	prob = str(np.random.rand(1)).lstrip('[').rstrip(']')
@@ -299,7 +294,7 @@ def process_reads_PE(fragment, index):
 	else:
 		R1.append(read1)
 		R2.append(read2)
-
+	
 	return R1, R2
 
 
@@ -307,30 +302,17 @@ start_time = datetime.now()
 
 
 def main():
-
+	
+	
 	if ref == None:
 		man.manpage()
 		sys.exit()
-
+	
 	else:
-
+		
 		errlog.info(print('reading reference file: ' + str(ref) + "\n"))
 		errlog.info(print('Indexing reference file....' + "\n"))
-
-		# First check if the working directory have permission to create a symlink
-		# Check if working directory has reading permission
-		# cwd = os.getcwd()
-		# Use basename of the input reference FASTA as prefix for the symlink
-		# check if windows is the OS, if TRUE print(info) output
-		# check if the reference file in wd, if FALSE, print(info) exit
 		
-		# try:
-		# 	Validator
-		#
-		# except OSError: print('You do not have permission to write or read in this directory. \n'
-		# 					  'Please copy the reference FASTA file into your current working directory and re-run')
-		#
-		# folder_time = datetime.now().strftime('%Y-%m-%d_%I:%M:%S')
 		basename = str(os.path.basename(output))
 		os.symlink(ref, basename)
 		pyfaidx.Faidx(basename)
@@ -339,44 +321,44 @@ def main():
 		for file in os.listdir(cwd):
 			if file.endswith('.fai'):
 				indexFile = (os.path.join('.', file))
-		
+	
 	ref_transcript_ids = parseIndexRef(indexFile)
-
+	
 	if args.se:
-
+		
 		sample_trans_ids = []
 		COUNTS = []
 		ID = []
 		Seq = []
-
+		
 		if countModel == None:
 			errlog.info(print('Simulating single-end reads....' + "\n"))
 			errlog.info(print('No transcript profile model detected!!' + "\n"))
 			errlog.info(print('Simulating default transcript profile' + "\n"))
-
+			
 			NB_counts = distributions.negative_binomial()
 			counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
 			scaled_counts = scalereadnum(counts_NB, readtot)
 			samptransids = random.choices(ref_transcript_ids, k=len(scaled_counts))
 			sample_trans_ids.append(samptransids)
 			COUNTS.append(scaled_counts)
-
+		
 		elif countModel != None and readtot == None:
 			errlog.info(print('Simulating single-end reads....' + "\n"))
 			errlog.info(print('Detected transcript profile model.....' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile' + "\n"))
-
+			
 			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			sample_trans_ids.append(profile[0])
 			COUNTS.append(profile[1])
-
+		
 		elif countModel != None and readtot != None:
 			# counts_s = np.rint(np.array([i * readtot for i in profile_propcount]) + 0.5).astype(int)
 			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			counts_s = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS.append(counts_s)
 			sample_trans_ids.append(profile[0])
-
+		
 		for j in sample_trans_ids:
 			p = processTransIDs(j)
 			for id, seq in p.items():
@@ -384,19 +366,19 @@ def main():
 				Seq.append(seq)
 		with gzip.open(output + '.fastq.gz', 'wb') as handle:
 			for seq, r in zip(Seq, COUNTS[0]):
-
+				
 				readinfo = GenerateRead(seq, readlen, r, 'SE')
 				startpos = readinfo[0]
 				endpos = readinfo[1]
-
+				
 				for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
 					header = sequence_identifier(index)
 					read = seq[int(i):int(j)]
 					q = sample_qualscore(sequencingModel=sqmodel)
 					handle.write('{}\n{}\n+\n{}\n'.format(header, read, q).encode())
-
+	
 	elif args.pe:
-
+		
 		sample_trans_ids = []
 		RFS = []
 		COUNTS_P = []
@@ -404,52 +386,53 @@ def main():
 		Seq = []
 		R1 = []
 		R2 = []
-
+		
 		if countModel == None:
 			errlog.info(print('Generating paired-end reads.....' + "\n"))
 			errlog.info(print('Sampling counts from negative binomial model' + "\n"))
-
+			
 			NB_counts = distributions.negative_binomial()
 			counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
 			counts_p = scalereadnum(counts_NB, readtot)
 			COUNTS_P.append(counts_p)
 			sample_trans_ids.append(random.choices(ref_transcript_ids, k=len(COUNTS_P[0])))
-
+		
 		elif countModel != None and readtot == None:
 			errlog.info(print('Generating paired-end reads' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile.....' + "\n"))
 			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			COUNTS_P.append(profile[1])
 			sample_trans_ids.append(profile[0])
-
+		
 		elif countModel != None and readtot != None:
 			errlog.info(print('Generating paired-end reads' + "\n"))
 			errlog.info(print('Simulating empirical transcript profile.....' + "\n"))
+		
 			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			counts_p = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS_P.append(counts_p)
 			sample_trans_ids.append(profile[0])
-
-		if fl_model != None:
-			FS = process_inputFiles.proc_FLmodel(fl_model, readtot).astype(int)
-			print(min(FS))
-			print(max(FS))
-			for i in COUNTS_P[0]:
-					randomFS = random.choices(FS, k=i)
-					RFS.append(randomFS)
-		else:
-			FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
-			for i in COUNTS_P[0]:
-					randomFS = random.choices(FS, k=i)
-					RFS.append(randomFS)
-
+			
 		data = list(itertools.chain.from_iterable(sample_trans_ids))
 		for j in data:
 			p = processTransIDs([j])
 			for id, seq in p.items():
 				ID.append(id)
 				Seq.append(seq)
-
+		
+		if fragmodel != None:
+			Fraglen_dist = process_inputFiles.proc_FLmodel(fragmodel, readtot).astype(int)
+			
+			for i, j in zip(Seq, COUNTS_P[0]):
+				randomFS = process_inputFiles.sample_target(Fraglen_dist, readlen, len(i), j)
+				print(randomFS)
+				RFS.append(randomFS)
+		else:
+			FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int).tolist()
+			for i in COUNTS_P[0]:
+				randomFS = random.choices(FS, k=i)
+				RFS.append(randomFS)
+	
 		for seq, r in zip(Seq, RFS):
 			readinfo = GenerateRead(seq, r, len(r), 'PE')
 			startpos = readinfo[0]
@@ -468,7 +451,7 @@ def main():
 				f2.write('{}\n{}\n+\n{}\n'.format(id, j, q2).encode())
 	os.remove(basename)
 	os.remove(indexFile)
-
+	
 	errlog.info(print('Simulation is complete'))
 	end_time = datetime.now()
 	print('Duration: {}'.format(end_time - start_time))
