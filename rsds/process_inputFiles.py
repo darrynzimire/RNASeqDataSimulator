@@ -5,6 +5,19 @@ import pickle as pickle
 import numpy as np
 import gzip
 import itertools
+import random
+
+
+def find_nearest(array, lower_bound, upper_bound):
+	array = np.asarray(array)
+	idx_lower = (np.abs(array - lower_bound)).argmin()
+	idx_upper = (np.abs(array - upper_bound)).argmin()
+	
+	return idx_lower, idx_upper
+
+
+def getmax_seqlen():
+	pass
 
 
 def proc_FLmodel(file, n):
@@ -26,9 +39,18 @@ def proc_FLmodel(file, n):
 		sample.append(N.tolist())
 
 	merged_dist = list(itertools.chain.from_iterable(sample))
-	res = np.round(np.exp(merged_dist))
-
+	res = np.sort(np.round(np.exp(merged_dist)))
+	
 	return res
+
+
+def sample_target(dist, readlen, seqlen, counts):
+	
+	bounds = find_nearest(dist, readlen, seqlen)
+	target_sample = dist[bounds[0]:bounds[1]]
+	randomFS = random.choices(target_sample, k=counts)
+	
+	return randomFS
 
 
 def proc_tx_expmodel(model):
@@ -36,7 +58,7 @@ def proc_tx_expmodel(model):
 	transcript_ID = []
 	transcript_count = []
 	transcript_propcount = []
-	file = gzip.open(model, 'rb')
+	file = open(model, 'rb')
 	profile = pickle.load(file, encoding='latin1')
 
 	for i in profile:
