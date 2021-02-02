@@ -74,16 +74,21 @@ def proc_tx_expmodel(model):
 	return transcript_ID, transcript_count, transcript_propcount
 
 
+def proc_DEmodel(model):
+	
+	file = open(model, 'rb')
+	model = pickle.load(file)
+	group_A = model[0]
+	group_B = model[1]
+	
+	return group_A, group_B
+
+
 def proc_qualmodel(model):
 	pass
 
 
 def process_fastq(file):
-	pass
-
-
-
-def process_countTable(table):
 	pass
 
 
