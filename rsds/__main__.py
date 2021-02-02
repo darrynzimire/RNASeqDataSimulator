@@ -1,6 +1,5 @@
 # encoding=utf-8
 
-
 import os, warnings
 import sys
 import numpy as np
@@ -39,20 +38,22 @@ errlog.addHandler(h)
 
 
 def get_arguments():
+	
 	parser = argparse.ArgumentParser()
 	
-	parser.add_argument('-r', 	type=int, 		required=False, 	default=101)
-	parser.add_argument('-n', 	type=int, 		required=False)
-	parser.add_argument('-f', 	type=str, 		required=False)
-	parser.add_argument('-s', 	type=int, 		required=False, 	default=1223)
-	parser.add_argument('-o', 	type=str, 		required=False)
-	parser.add_argument('-q', 	type=str, 		required=False)
-	parser.add_argument('-c', 	type=str, 		required=False)
-	parser.add_argument('-er',	type=float, 	required=False, 	default=-1)
-	parser.add_argument('-fl',	nargs=2, 		 					default=(250, 25))
+	parser.add_argument('-r', 	type=int, 			required=False, 	default=101)
+	parser.add_argument('-n', 	type=int, 			required=False)
+	parser.add_argument('-f', 	type=str, 			required=False)
+	parser.add_argument('-s', 	type=int, 			required=False, 	default=1223)
+	parser.add_argument('-o', 	type=str, 			required=False)
+	parser.add_argument('-q', 	type=str, 			required=False)
+	parser.add_argument('-c', 	type=str, 			required=False)
+	parser.add_argument('-er',	type=float, 		required=False, 	default=-1)
+	parser.add_argument('-fl',	nargs=2, 		 						default=(250, 25))
 	parser.add_argument('-flm', type=str, 			required=False)
 	parser.add_argument('-se', action='store_true', required=False)
 	parser.add_argument('-pe', action='store_true', required=False)
+	parser.add_argument('-de', 	type=str, 			required=False)
 	
 	return parser
 
@@ -69,6 +70,7 @@ seed = args.s
 output = args.o
 sqmodel = args.q
 countModel = args.c
+diffmodel = args.de
 SE_RATE = args.er
 
 
@@ -283,6 +285,7 @@ def get_reads(record):
 
 
 def process_reads_PE(fragment, index):
+	
 	R1 = []
 	R2 = []
 	prob = str(np.random.rand(1)).lstrip('[').rstrip(']')
@@ -302,7 +305,6 @@ start_time = datetime.now()
 
 
 def main():
-	
 	
 	if ref == None:
 		man.manpage()
@@ -353,11 +355,15 @@ def main():
 			COUNTS.append(profile[1])
 		
 		elif countModel != None and readtot != None:
-			# counts_s = np.rint(np.array([i * readtot for i in profile_propcount]) + 0.5).astype(int)
 			profile = process_inputFiles.proc_tx_expmodel(countModel)
 			counts_s = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS.append(counts_s)
 			sample_trans_ids.append(profile[0])
+		
+		if diffmodel != None:
+			model = process_inputFiles.proc_DEmodel(diffmodel)
+			grpA = model[0]
+			grpB = model[1]
 		
 		for j in sample_trans_ids:
 			p = processTransIDs(j)
@@ -412,6 +418,11 @@ def main():
 			counts_p = np.rint(np.multiply(profile[2], readtot)).astype(int)
 			COUNTS_P.append(counts_p)
 			sample_trans_ids.append(profile[0])
+		
+		if diffmodel != None:
+			model = process_inputFiles.proc_DEmodel(diffmodel)
+			grpA = model[0]
+			grpB = model[1]
 			
 		data = list(itertools.chain.from_iterable(sample_trans_ids))
 		for j in data:
@@ -449,6 +460,7 @@ def main():
 				f1.write('{}\n{}\n+\n{}\n'.format(id, i, q1).encode())
 				q2 = sample_qualscore(sequencingModel=sqmodel)
 				f2.write('{}\n{}\n+\n{}\n'.format(id, j, q2).encode())
+				
 	os.remove(basename)
 	os.remove(indexFile)
 	
