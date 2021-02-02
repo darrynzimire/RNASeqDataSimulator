@@ -79,11 +79,19 @@ def manpage():
 			'\n'
 	  'program: rsds-diff:\n'
 				  "\n"
-	  'description:\n'
+	  'This feature takes in a empirical transcript expression count table and add user-specific fold changes to a select set of genes.\n'
+		'differentially expressed between two groups'
 				  "\n"
-	  'usage:\n'
+	  'usage: rsds-diff <options>\n'
 				  "\n"
 	  'options:\n'
+		  '\n'
+		  '--ref'
+		  '--countmatrix'
+		  'n_genes'
+		  '--quant'
+		  '--fold_changes'
+		  '--output'
 
 		)
 
