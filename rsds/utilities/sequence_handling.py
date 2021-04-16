@@ -3,6 +3,8 @@
 import numpy as np
 import random
 from Bio.Seq import Seq
+from rsds.__main__ import sample_qualscore
+from rsds import output
 
 
 def scalereadnum(read_counts, n):
@@ -41,30 +43,31 @@ def getseq(reference, key, start=1, end=None):
 		return ""
 
 	# seek to beginning
-	infile = open(reference, 'r')
-	infile.seek(seek)
+	with open(reference, 'r') as infile:
 
-	# read until end of sequence
-	header = ''
-	seq = []
-	if end == None:
-		lenNeeded = util.INF
-	else:
-		lenNeeded = end - start
+		infile.seek(seek)
 
-	len2 = 0
-	while len2 < lenNeeded:
-		line = infile.readline()
-		if line.startswith(">") or len(line) == 0:
-			break
-		seq.append(header + line.rstrip())
-		len2 += len(seq[-1])
-		if len2 > lenNeeded:
-			seq[-1] = seq[-1][:-int(len2 - lenNeeded)]
-			break
-	seq = "".join(seq)
+		# read until end of sequence
+		header = ''
+		seq = []
+		if end == None:
+			lenNeeded = util.INF
+		else:
+			lenNeeded = end - start
 
-	return seq
+		len2 = 0
+		while len2 < lenNeeded:
+			line = infile.readline()
+			if line.startswith(">") or len(line) == 0:
+				break
+			seq.append(header + line.rstrip())
+			len2 += len(seq[-1])
+			if len2 > lenNeeded:
+				seq[-1] = seq[-1][:-int(len2 - lenNeeded)]
+				break
+		seq = "".join(seq)
+
+		return seq
 
 
 def processTransIDs(refFile, ids):
@@ -78,6 +81,7 @@ def processTransIDs(refFile, ids):
 
 	Transseq = []
 	header = []
+
 	transcriptID = {i: [j, k] for i, j, k in ids}
 	ID = transcriptID.keys()
 	for k in ID:
@@ -121,10 +125,10 @@ def GenerateRead(seq, readLen, n, *args):
 
 		elif ag == 'PE':
 
-			nmax = [seqLen - i - 1 for i in readLen]
+			nmax = [seqLen - i - 1 for i in n]
 			v = np.round(np.random.uniform(low=0, high=nmax, size=None))
-			startpos = list(random.choices(v, k=len(readLen)))
-			endpos = [i + j for i, j in zip(startpos, readLen)]
+			startpos = list(random.choices(v, k=len(n)))
+			endpos = [i + j for i, j in zip(startpos, n)]
 			spos.append(startpos)
 			epos.append(endpos)
 
@@ -166,28 +170,41 @@ def get_reads(record):
 	return reads
 
 
-def assemble_reads(transcript_ids, counts, readlen, readtot, *kwargs):
+def assemble_reads(Seq, counts, readlen, qmodel, kwargs):
 
-	ID = []
-	Seq = []
+	sim_data = []
+	if kwargs == 'se':
+		counter = 0
+		for seq, r in zip(Seq, counts):
+			readinfo = GenerateRead(seq, readlen, r, 'SE')
+			startpos = readinfo[0]
+			endpos = readinfo[1]
+			for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
+				header = output.assemble_Illumina_line(instrument='rsdsv0.1', single_end=True)
+				read = seq[int(i):int(j)]
+				quality_string = sample_qualscore(qmodel)
+				# output.write_fastq(filename, header, read, quality_string, single_end=True)
+				records = header, read, quality_string
+				sim_data.append(records)
 
-	for j in transcript_ids:
-		p = processTransIDs(j)
-		for id, seq in p.items():
-			ID.append(id)
-			Seq.append(seq)
+	elif kwargs == 'pe':
+		for seq, r in zip(Seq, counts):
+			readinfo = GenerateRead(seq, readlen, r, 'PE')
+			startpos = readinfo[0]
+			endpos = readinfo[1]
+			R1 = []
+			R2 = []
+			for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
+				read = seq[int(i):int(j)]
+				data = process_reads_PE(readlen, read)
+				R1.append(''.join(data[0]))
+				R2.append(''.join(data[1]))
+			for index, (r1, r2) in enumerate(zip(R1, R2)):
+				header = output.assemble_Illumina_line(instrument='HiSeq2500', single_end=False)
+				quality_string = sample_qualscore(qmodel)
+				reads = (r1, r2)
+				records = (header, reads, quality_string)
+				sim_data.append(records)
 
-	for ag in kwargs:
-		if ag == 'se':
-			for seq, r in zip(Seq, counts):
-				readinfo = GenerateRead(seq, readlen, r, 'SE')
-				startpos = readinfo[0]
-				endpos = readinfo[1]
-				return Seq, startpos, endpos
+	return sim_data
 
-
-def sample_qualscore(SE_CLASS, sequencingModel):
-
-	(myQual, myErrors) = SE_CLASS.getSequencingErrors(sequencingModel)
-
-	return myQual
