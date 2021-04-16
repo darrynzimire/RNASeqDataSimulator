@@ -759,7 +759,7 @@ class ReadContainer:
 			if self.readLen == len(initQ1):
 				self.qIndRemap = list(range(self.readLen))
 			else:
-				print('Warning: Read length of error model ('+str(len(initQ1))+') does not match -r value ('+str(self.readLen)+'), rescaling model...')
+				# print('Warning: Read length of error model ('+str(len(initQ1))+') does not match -r value ('+str(self.readLen)+'), rescaling model...')
 				self.qIndRemap = [max([1, len(initQ1)*n//readLen]) for n in range(readLen)]
 
 			# initialize probability distributions
