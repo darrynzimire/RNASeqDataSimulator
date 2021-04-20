@@ -3,75 +3,126 @@
 import argparse
 import pickle as pickle
 import pandas as pd
-import os
-import sys
+import numpy as np
+import itertools
+import decimal
+import string
 import pyfaidx
 import math
+import sys
+import os
 import re
 
 parser = argparse.ArgumentParser(description='two-group DE')
-parser.add_argument('--ref', type=str, required=True)
-parser.add_argument('--countmatrix', type=str, required=True)
-parser.add_argument('--n_genes', type=int, required=False, default=7)
-parser.add_argument('--quant', type=int, required=False, default=5)
-parser.add_argument('--fold_changes', type=int, required=False)
-parser.add_argument('--output', type=str, required=False)
+parser.add_argument('--ref', 			type=str, 		required=True)
+parser.add_argument('--countmatrix', 	type=str, 		required=True)
+parser.add_argument('--n_genes', 		type=int, 		required=False, default=5)
+parser.add_argument('--exp_levels', 	type=int, 		required=False, default=6)
+parser.add_argument('--fold_changes', nargs=3,  type=float, metavar='(min, max, step)',  required=False, default=(3.0, 6.0, 0.5))
+parser.add_argument('--output', 		type=str, 		required=False)
+parser.add_argument('--seed', type=int, default=1234)
+
 
 args = parser.parse_args()
-ref = args.ref
+refdatabase = args.ref
 table = args.countmatrix
-n_levels = args.quant
+exp_levels = args.exp_levels
+fc_levels = args.fold_changes
 genes = args.n_genes
 modelName = args.output
 
 
-def readTable(file):
+desired_width = 320
+pd.set_option('display.width', desired_width)
+pd.set_option('display.max_columns', 12)
+
+
+def expression_levels(num_levels):
 	
-	df_table = pd.read_table(file)
-	# print(df_table.info())
+	alphabet = string.ascii_lowercase
+	levels = list(alphabet[0:num_levels].upper())
+	
+	return levels
+
+
+def fc_range(fc):
+
+	start = int(round(fc[0], 0))
+	stop = int(round(fc[1], 0))
+	step = fc[2]
+
+	while start < stop:
+		yield float(round(start, 2))
+		start += decimal.Decimal(step)
+
+
+FC_levels = list(fc_range(fc_levels))
+print(FC_levels)
+
+
+def f(a, b, *kwargs):
+	for ag in kwargs:
+		if ag == 'down':
+			val_up = a * math.sqrt(b)
+			return val_up
+		elif ag == 'up':
+			val_down = a * 1 / math.sqrt(b)
+			return val_down
+
+
+def assignfctogenes(df_exp_level, fold_changes, num_genes):
+	
+	FC_list = []
+	FC_list_repeat = np.repeat(fold_changes, num_genes)
+	num_letters = df_exp_level.value_counts()
+	
+	for number_of_letters in num_letters:
+		i = 0
+		for FC in FC_list_repeat:
+			if i == number_of_letters:
+				break
+			else:
+				FC_list.append([FC])
+				i += 1
+	return list(itertools.chain.from_iterable(FC_list))
+	
+
+def createfctable(file):
+	
+	df_table = pd.read_csv(file, sep='\t')
 	# remove all rows where expected counts is less than 1
 	df1 = df_table[df_table.expected_count >= 1]
 	df1.drop(df1.index)
 	# sort the dataframe in ascending order by the expected count column
 	df_sorted = df1.sort_values(by=['expected_count'], ascending=True)
-	
 	# Set the classes of expression level
-	levels = ['very_low', 'low', 'normal', 'high', 'very_high']
-	# divide the dataframe into quantiles and randomly sample the number of specified genes from each class
-	df_genes = df_sorted.groupby(pd.qcut(df_sorted.expected_count, n_levels, labels=levels)).apply(
-		lambda x: x.sample(genes))
-	# Subtract the selected genes to be differentially expressed
-	baseline = pd.concat([df_sorted, df_genes, df_genes]).drop_duplicates(keep=False)
+	levels = expression_levels(exp_levels)
+	# divide the dataframe into quantiles and randomly sample the number of genes specified from each class
+	df_genes = df_sorted.groupby(pd.qcut(df_sorted.expected_count, len(levels), labels=levels)).apply(
+		lambda x: x.sample(genes*len(levels)))
+	df_genes = df_genes.rename(columns={'expected_count':'reference_count'})
+	df_genes.reset_index(inplace=True)
+	df_diagnostic = df_genes.iloc[:, [2, 6, 0]]
+	df_diagnostic = df_diagnostic.rename(columns={'expected_count':'expression_class'})
+
+	fc_list = assignfctogenes(df_diagnostic.expression_class, FC_levels, genes)
+	df_diagnostic['FC'] = pd.DataFrame(fc_list)
+	df_diagnostic['control_count'] = df_diagnostic.apply(lambda x: f(x.reference_count, x.FC, 'up'), axis=1)
+	df_diagnostic['experiment_count'] = df_diagnostic.apply(lambda x: f(x.reference_count, x.FC, 'down'), axis=1)
+	df_diagnostic['E/C'] = df_diagnostic['experiment_count'] / df_diagnostic['control_count']
+
+	# Subtract the selected genes to be differentially expressed from the original count matrix
+	background = pd.merge(df_sorted, df_diagnostic, indicator=True, how='outer')\
+		.query('_merge=="left_only"').drop('_merge', axis=1)
+	df_background = background.iloc[:, [0, 4]]
+	df_control = df_diagnostic.iloc[:, [0, 4]]
+	df_experiment = df_diagnostic.iloc[:, [0, 5]]
 	
-	# create two groups: case and control
-	df_group1 = df_genes.copy()
-	df_group2 = df_genes.copy()
-	
-	return baseline, df_group1, df_group2
-
-
-def fold_change():
-	
-	FC = [x * 0.5 for x in range(1, genes + 1)]
-	
-	return FC
-
-
-def induce_fold_change(FC, value, *kwargs, ):
-	for i in FC:
-		for ag in kwargs:
-			if ag == 'control':
-				count = value * math.sqrt(i)
-				return count
-			elif ag == 'case':
-				count = value * 1 / math.sqrt(i)
-				return count
-
-
-# return the transcript offsets and associated counts
+	return df_background, df_control, df_experiment
 
 
 def parseIndexRef(indexFile):
+	
 	"""
 	Description:
 	Read in sequence data from reference index FASTA file returns a list of transcript IDs
@@ -80,6 +131,7 @@ def parseIndexRef(indexFile):
 	 - indexFile (str): The index file generated by the program, written to the current directory
 	Return: The function returns a list of tuples containing the transcript id, start and end offset of the transcript sequence
 	"""
+	
 	ref_inds = []
 	filt_ref_inds = []
 	
@@ -88,11 +140,12 @@ def parseIndexRef(indexFile):
 	except BaseException:
 		print()
 		
-		sys.exit('Cannot find indexed reference file. Please provide a reference FASTA file')
+		sys.exit('Cannot find indexed reference '
+				 'file. Please provide a reference FASTA file')
 	
 	for line in fai:
 		splt = line[:-1].split('\t')
-		header = '@' + splt[0]
+		header = '>' + splt[0]
 		seqLen = int(splt[1])
 		offset = int(splt[2])
 		lineLn = int(splt[3])
@@ -110,18 +163,32 @@ def parseIndexRef(indexFile):
 	return filt_ref_inds
 
 
-def create_model(ref, profile):
+def create_model(ref, profile, *kwargs):
 	
-	df_ref = pd.DataFrame(ref, columns=['Transcript_ID', 'start', 'end', 'Length'])
-	del df_ref['Length']
-	# print(df_ref.info())
+	df_ref = pd.DataFrame(ref, columns=['Transcript_ID', 'start', 'end'])
 	df_ref['ENS_transcript_id'] = df_ref['Transcript_ID'].apply(lambda x: re.sub(r"^>(ENST\d*\.\d{1,3}(?:_.*)*)\|.*", r"\1", x))
-	df_table = profile
-	df_result = pd.merge(df_table, df_ref, left_on='transcript_id', right_on='ENS_transcript_id')
-	df_result = df_result[['Transcript_ID', 'start', 'end', 'expected_count']]
-	df_result['expected_count'] = df_result['expected_count'].round().astype(int)
-	total = df_result['expected_count'].sum()
-	df_result['proportional_count'] = df_result['expected_count'].div(total)
+	df_profile = profile
+	df_result = pd.merge(df_profile, df_ref, left_on='transcript_id', right_on='ENS_transcript_id')
+
+	for ag in kwargs:
+		
+		if ag == 'control':
+			df_result = df_result[['Transcript_ID', 'start', 'end', 'control_count']]
+			df_result['control_count'] = df_result['control_count'].round().astype(int)
+			total = df_result['control_count'].sum()
+			df_result['proportional_count'] = df_result['control_count'].div(total)
+		
+		elif ag == 'experiment':
+			df_result = df_result[['Transcript_ID', 'start', 'end', 'experiment_count']]
+			df_result['experiment_count'] = df_result['experiment_count'].round().astype(int)
+			total = df_result['experiment_count'].sum()
+			df_result['proportional_count'] = df_result['experiment_count'].div(total)
+		
+		elif ag == 'background':
+			df_result = df_result[['Transcript_ID', 'start', 'end', 'expected_count']]
+			df_result['expected_count'] = df_result['expected_count'].round().astype(int)
+			total = df_result['expected_count'].sum()
+			df_result['proportional_count'] = df_result['expected_count'].div(total)
 
 	return df_result
 
@@ -129,39 +196,29 @@ def create_model(ref, profile):
 def main():
 	
 	basename = str(os.path.basename(modelName))
-	os.symlink(ref, basename)
+	os.symlink(refdatabase, basename)
 	pyfaidx.Faidx(basename)
 	cwd = os.getcwd()
 	indexFile = ''
 	for file in os.listdir(cwd):
 		if file.endswith('.fai'):
 			indexFile = (os.path.join('.', file))
-	
-	df = readTable(table)
-	baseline = df[0]
-	case = df[1]
-	control = df[2]
-	case['expected_count'] = case['expected_count'].apply(lambda x: induce_fold_change(fold_change(), x, 'case'))
-	control['expected_count'] = control['expected_count'].apply(
-		lambda x: induce_fold_change(fold_change(), x, 'control'))
-	
-	# combine baseline and group
-	group_A = pd.concat([baseline, control], ignore_index=True, sort=False)
-	group_B = pd.concat([baseline, case], ignore_index=True, sort=False)
-	
+			
 	refindex = parseIndexRef(indexFile)
-	reference = refindex[0]
-	
-	model_A = create_model(reference, group_B)
-	model_B = create_model(reference, group_A)
-	
-	group_A = model_A.to_records(index=False)
-	group_B = model_B.to_records(index=False)
-	records = (group_A, group_B)
-	
+	df = createfctable(table)
+	background_model = create_model(refindex, df[0], 'background')
+	control_model = create_model(refindex, df[1], 'control')
+	experiment_model = create_model(refindex, df[2], 'experiment')
+	control = control_model.to_records(index=False)
+	experiment = experiment_model.to_records(index=False)
+	background = background_model.to_records(index=False)
+	records = [background, control, experiment]
 	outf = modelName + '.p'
 	output = open(outf, 'wb')
 	pickle.dump(records, output)
+
+	os.remove(basename)
+	os.remove(indexFile)
 
 
 if __name__ == '__main__':
