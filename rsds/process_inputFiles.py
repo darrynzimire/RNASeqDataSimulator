@@ -9,6 +9,8 @@ from rsds import distributions, output
 from rsds.utilities import sequence_handling
 import sys
 import logging.handlers
+from shutil import copyfile
+
 
 errlog = logging.getLogger("ErrLog")
 
@@ -17,10 +19,8 @@ def defaultfragsize(fragment_size, fragment_std, counts):
 
 	RFS = []
 	FS = np.random.normal(fragment_size, fragment_std, 100000).astype(int)
-	# print(FS)
 	for i in counts:
 		randomFS = random.choices(FS, k=i)
-		# print(randomFS)
 		RFS.append(randomFS)
 
 	return RFS
@@ -50,7 +50,7 @@ def parseIndexRef(indexFile):
 
 		fai = open(indexFile, 'r')
 	except BaseException:
-		print()
+
 		errlog.error('Cannot find indexed reference file. Please provide a reference FASTA file')
 		sys.exit('Cannot find indexed reference file. Please provide a reference FASTA file')
 
@@ -75,28 +75,10 @@ def parseIndexRef(indexFile):
 	return filt_ref_inds
 
 
-def get_transcriptdata(model, refindex):
-
-	model_data = process_models(model)
-	transcript_identities = model_data[0]
-	counts = model_data[1]
-	propcounts = model_data[2]
-	transcript_sequences =[]
-
-	for i in transcript_identities:
-		p = sequence_handling.processTransIDs(refindex, [i])
-		for id, seq in p.items():
-			transcript_identities.append(id)
-			transcript_sequences.append(seq)
-
-	return transcript_sequences, counts, propcounts
-
-
 def default_simulation(refFile, refindex, readtot):
 
 	counts = []
 	transcript_sequences = []
-	# ref_transcript_ids = parseIndexRef(refindex)
 	NB_counts = distributions.negative_binomial()
 	counts_NB = np.random.choice(NB_counts, size=readtot, replace=True).tolist()
 	scaled_counts = sequence_handling.scalereadnum(counts_NB, readtot)
@@ -105,15 +87,14 @@ def default_simulation(refFile, refindex, readtot):
 	for i in samptransids:
 		p = sequence_handling.processTransIDs(refFile, [i])
 		for id, seq in p.items():
-			# transcript_identities.append(id)
 			transcript_sequences.append(seq)
-	# transcript_ids.append(samptransids)
 	counts.append(scaled_counts)
 
 	return transcript_sequences, counts
 
 
 def samplingtranscripts(ids, readtot):
+
 	""""
 	Description: This function randomly sample from all reference transcripts
 	Parameters: ids (list of tuples) It takes as input all reference transcripts offsets
@@ -128,26 +109,27 @@ def samplingtranscripts(ids, readtot):
 
 def proc_FLmodel(file, n):
 
-	f = gzip.open(file, 'rb')
-	model = pickle.load(f)
+	with gzip.open(file, 'rb') as f:
 
-	mus = model[0].flatten()
-	sigma = np.sqrt(model[1].flatten())
-	weights = model[2]
-	aic = model[3]
-	bic = model[4]
-	size = [int(round(i * n)) for i in weights]
-	np.random.seed(1234)
-	sample = []
-	for m, sc, si in zip(mus, sigma, size):
-		N = np.random.normal(loc=m, scale=sc, size=si)
+		model = pickle.load(f)
 
-		sample.append(N.tolist())
+		mus = model[0].flatten()
+		sigma = np.sqrt(model[1].flatten())
+		weights = model[2]
+		aic = model[3]
+		bic = model[4]
+		size = [int(round(i * n)) for i in weights]
+		np.random.seed(1234)
+		sample = []
+		for m, sc, si in zip(mus, sigma, size):
+			N = np.random.normal(loc=m, scale=sc, size=si)
 
-	merged_dist = list(itertools.chain.from_iterable(sample))
-	res = np.sort(np.round(np.exp(merged_dist)))
-	
-	return res
+			sample.append(N.tolist())
+
+		merged_dist = list(itertools.chain.from_iterable(sample))
+		res = np.sort(np.round(np.exp(merged_dist)).astype(int)).tolist()
+
+		return res
 
 
 def sample_target(dist, readlen, seqlen, counts):
@@ -159,82 +141,19 @@ def sample_target(dist, readlen, seqlen, counts):
 	return randomFS
 
 
-def compilefastqrecord(readlen, reference, refindex, filename, kwargs, model=None, readtot=None, fragmodel=None):
-	# global counts, transcript_sequences, Fraglen_dist
-	counts = []
-	transcript_sequences = []
-	Fraglen_dist = []
-
-	if model == None:
-		default_mode = default_simulation(reference, refindex, readtot)
-		trans_seq = list(default_mode[0])
-		transcript_sequences.append(trans_seq)
-		count_data = list(itertools.chain.from_iterable(default_mode[1]))
-		counts.append(count_data)
-
-	if model != None:
-		transcript_info = get_transcriptdata(model, refindex)
-		transcript_sequences = transcript_info[0]
-		if readtot != None:
-			counts = np.rint(np.multiply(transcript_info[2], readtot)).astype(int)
-			counts.append(counts)
-		else:
-			counts = transcript_info[1]
-			counts.append(counts)
-
-	if fragmodel != None:
-		FRS = proc_FLmodel(fragmodel, readtot).astype(int)
-		Fraglen_dist.append(FRS)
-
-	else:
-		Fraglen_dist = defaultfragsize(250, 25, counts[0])
-		Fraglen_dist.append(Fraglen_dist)
-
-	if kwargs =='se':
-		for seq, r in zip(transcript_sequences[0], counts[0]):
-			# print(seq)
-			readinfo = sequence_handling.GenerateRead(seq, readlen, r, 'SE')
-			startpos = readinfo[0]
-			endpos = readinfo[1]
-			for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
-				header = output.sequence_identifier(readlen, index)
-				read = seq[int(i):int(j)]
-				output.write_fastq(filename, header, read, 'se')
-
-	elif kwargs == 'pe':
-
-		for seq, r in zip(transcript_sequences, Fraglen_dist):
-			readinfo = sequence_handling.GenerateRead(seq, readlen, r, 'PE')
-			startpos = readinfo[0]
-			endpos = readinfo[1]
-			R1 = []
-			R2 = []
-			for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
-				read = seq[int(i):int(j)]
-				data = sequence_handling.process_reads_PE(readlen, read)
-				R1.append(''.join(data[0]))
-				R2.append(''.join(data[1]))
-			for index, (r1, r2) in enumerate(zip(R1, R2)):
-				header = output.sequence_identifier(readlen, index)
-				read1 = r1
-				read2 = r2
-				output.write_fastq(filename, header, read1, read2)
-
-
-def process_models(model):
+def process_models(profile):
 
 	transcript_ID = []
 	transcript_count = []
 	transcript_propcount = []
-	file = gzip.open(model, 'rb')
-	profile = pickle.load(file)
 
 	for i in profile:
+
 		rec_id = i[0]
 		trans_id = rec_id.split('|')
-		id = (trans_id[0], i[1], i[2])
+		id = [trans_id[0], i[1], i[2]]
 		transcript_ID.append(id)
-		rec_counts = np.rint(i[3]).astype(int)
+		rec_counts = i[3]
 		transcript_count.append(rec_counts)
 		rec_propcount = i[4]
 		transcript_propcount.append(rec_propcount)
@@ -242,88 +161,134 @@ def process_models(model):
 	return transcript_ID, transcript_count, transcript_propcount
 
 
-def proc_DEmodel(model):
-	
-	file = open(model, 'rb')
-	model = pickle.load(file)
-	background = model[0]
-	control = model[1]
-	experiment = model[2]
-	return background, control, experiment
+def get_trans_sequences(transcript_offsets, reference):
+
+	transcript_sequences = []
+	for i in transcript_offsets:
+		p = sequence_handling.processTransIDs(reference, [i])
+		for id, seq in p.items():
+			transcript_sequences.append(seq)
+
+	return transcript_sequences
 
 
-def expression_profiling_simulation(model, readtot):
-	
-	profile = process_models(model)
+def diffmode(model, reference, readtot):
 
-	if readtot==None:
-		transcript_ids = profile[0]
-		counts = profile[1]
-		return transcript_ids, counts
+	with open(model, 'rb') as file:
+		profile = pickle.load(file)
 
-	elif readtot != None:
-		counts_s = np.rint(np.multiply(profile[2], readtot)).astype(int)
-		transcript_ids = profile[0]
-		return transcript_ids, counts_s
+		background = process_models(profile[0].tolist())
+		control = process_models(profile[1].tolist())
+		experiment = process_models(profile[2].tolist())
 
+		b_prop = np.rint(np.multiply(background[2], readtot)).astype(int)
+		background_counts = [1 if i==0 else i for i in b_prop]
+		background_seq = get_trans_sequences(background[0], reference)
 
-def writeDEoutput(diffmodel):
+		c_prop = np.rint(np.multiply(control[2], readtot)).astype(int)
+		control_counts = [1 if i==0 else i for i in c_prop]
+		control_seq = get_trans_sequences(control[0], reference)
 
-	model = proc_DEmodel(diffmodel)
-	background = process_models(model[0])
-	control = process_models(model[1])
-	experiment = process_models(model[2])
+		e_prop = np.rint(np.multiply(experiment[2], readtot)).astype(int)
+		experiment_counts = [1 if i==0 else i for i in e_prop]
+		experiment_seq = get_trans_sequences(experiment[0], reference)
+		data = {'background':(background_seq, background_counts), 'control':(control_seq, control_counts), 'experiment': (experiment_seq, experiment_counts)}
 
-
-def proc_qualmodel(model):
-	pass
+	return data
 
 
-def process_fastq(file):
-	pass
+def makefraglendist(fmodel, readtot, readlen, counts, transcript_sequences):
+
+	fraglendist = []
+
+	FRS = proc_FLmodel(fmodel, readtot)
+	for i, j in zip(transcript_sequences, counts):
+		randomFS = sample_target(FRS, readlen, len(i), j)
+		fraglendist.append(randomFS)
+
+	return fraglendist
 
 
-def process_SAM(file):
-	pass
+def compilefastqrecord(readlen, reference, refindex, qmodel, filename, kwargs, model=None, diff=None, readtot=None, fragmodel=None):
+
+	global counts
+
+	if model==None and diff==None:
+
+		default_data = default_simulation(reference, refindex, readtot)
+		defcounts = list(itertools.chain.from_iterable(default_data[1]))
+
+		if kwargs is 'se':
+			sim_data = sequence_handling.assemble_reads(default_data[0], defcounts, readlen, qmodel, kwargs)
+			output.write_fastq(filename, sim_data, single_end=True)
+
+		elif kwargs is 'pe':
+			if fragmodel is None:
+				counts = defaultfragsize(250, 25, defcounts)
+			else:
+				counts = makefraglendist(fragmodel, readtot, readlen, defcounts, default_data[0])
+			sim_data = sequence_handling.assemble_reads(default_data[0], counts, readlen, qmodel, kwargs)
+			output.write_fastq('rsdsv0.1', sim_data, single_end=False)
+
+	elif model != None and diff==None:
+
+		with gzip.open(model, 'rb') as file:
+			profile = pickle.load(file)
+			profile_data = process_models(profile)
+			if readtot==None:
+				counts = profile[1]
+			else:
+				counts = np.rint(np.multiply(profile_data[2], readtot)).astype(int)
+				counts = [1 if i==0 else i for i in counts]
+			seq = get_trans_sequences(profile_data[0], reference)
+
+		if kwargs is 'se':
+			sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+		elif kwargs is 'pe':
+			if fragmodel is None:
+				counts = defaultfragsize(250, 25, counts)
+			else:
+				counts = makefraglendist(fragmodel, readtot, readlen, counts, seq)
+			sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+
+	elif model == None and diff != None:
+
+		diff_data = diffmode(diff, reference, readtot)
+		allfilenames = []
+		if kwargs is 'se':
+			seq, counts = diff_data['background']
+			background_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+			outfilename = output.write_fastq('grp1', background_data, single_end=True)
+			cfile = output.generatefilename(name='grp2', zipped=True, single_end=True)
+			copyfile(outfilename, cfile)
+			allfilenames.append(outfilename)
+			allfilenames.append(cfile)
+			seq, counts = diff_data['control']
+			control_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+			seq, counts = diff_data['experiment']
+			exp_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+			output.add_simreads(allfilenames, control_data, single_end=True, simdata2=exp_data)
+
+		elif kwargs is 'pe':
+
+			seq, counts = diff_data['background']
+			if fragmodel is None:
+				fcounts = defaultfragsize(250, 25, counts)
+			else:
+				fcounts = makefraglendist(fragmodel, readtot, readlen, counts, seq)
+			background_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, kwargs)
+			outfile1 = output.write_fastq('grp1', background_data, single_end=False)
+			cfile = output.generatefilename(name='grp2', zipped=True, single_end=False)
+			copyfile(outfile1[0], cfile[0])
+			copyfile(outfile1[1], cfile[1])
+			allfilenames.append(outfile1)
+			allfilenames.append(cfile)
+			seq, counts = diff_data['control']
+			control_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, kwargs)
+			seq, counts = diff_data['experiment']
+			exp_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, kwargs)
+			output.add_simreads(allfilenames, control_data, single_end=False, simdata2=exp_data)
 
 
-def proc_FASTA():
-	pass
 
 
-	# for seq, r in zip(transcript_sequences, counts):
-	# 	randomFS = sample_target(Fraglen_dist, readlen, len(seq), r)
-	# 	print(randomFS)
-
-	# if model==None:
-	#
-	# 	errlog.info(print('Simulating single-end reads....' + "\n"))
-	# 	errlog.info(print('No transcript profile model detected!!' + "\n"))
-	# 	errlog.info(print('Simulating default transcript profile' + "\n"))
-	# 	default_mode = default_simulation(reference, refindex, readtot)
-	# 	transcript_sequences = default_mode[0]
-	# 	# print(len(transcript_sequences))
-	# 	counts = list(itertools.chain.from_iterable(default_mode[1]))
-	# 	# print(sum(counts))
-
-	# else:
-	# 	transcript_info = get_transcriptdata(model, refindex)
-	# 	transcript_sequences = transcript_info[0]
-	#
-	# 	if readtot != None:
-	# 		counts = np.rint(np.multiply(transcript_info[2], readtot)).astype(int)
-	# 	else:
-	# 		counts = transcript_info[1]
-
-	# if fragmodel != None:
-	# 	Fraglen_dist = proc_FLmodel(fragmodel, readtot).astype(int)
-	# 	for seq, r in zip(transcript_sequences, counts):
-	# 		randomFS = sample_target(Fraglen_dist, readlen, len(seq), r)
-	# 		print(randomFS)
-	#
-	# else:
-	# 	Fraglen_dist = defaultfragsize(250, 25, counts)
-		# print(Fraglen_dist)
-
-		# print(randomFS)
-		# randomFragmentsizes.append(randomFS)
