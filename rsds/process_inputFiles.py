@@ -6,7 +6,7 @@ import gzip
 import itertools
 import random
 from rsds import distributions, output
-from rsds.utilities import sequence_handling
+from rsds import sequence_handling
 import sys
 import logging.handlers
 from shutil import copyfile
