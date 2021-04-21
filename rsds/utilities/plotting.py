@@ -21,7 +21,7 @@ def plot_informationCriterion(aic, bic, n_components):
 	pass
 
 
-def plot_Qualscore_heatmap():
+def plot_Qualscore_profile():
 	pass
 
 

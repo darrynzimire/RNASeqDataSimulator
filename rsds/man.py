@@ -86,12 +86,12 @@ def manpage():
 				  "\n"
 	  'options:\n'
 		  '\n'
-		  '--ref'
-		  '--countmatrix'
-		  'n_genes'
-		  '--quant'
-		  '--fold_changes'
-		  '--output'
+		  '--ref                     reference FASTA file\n'       
+		  '--countmatrix             count table results from RSEM\n'
+		  '--n_genes                 number of genes to be differentially expressed between groups\n' 
+		  '--quant                   expression level class for genes\n'
+		  '--fold_changes            fold_changes (min, max, increment)\n'  
+		  '--output                  output file name\n'
 
 		)
 

@@ -5,10 +5,12 @@ import pickle as pickle
 import pandas as pd
 import numpy as np
 import itertools
+from datetime import datetime
 import decimal
 import string
 import pyfaidx
 import math
+import json
 import sys
 import os
 import re
@@ -31,6 +33,13 @@ fc_levels = args.fold_changes
 genes = args.n_genes
 modelName = args.output
 
+start_time = datetime.now()
+with open('commandline_args.txt', 'w') as f:
+    json.dump(args.__dict__, f, indent=2)
+
+
+with open('commandline_args.txt', 'r') as f:
+    args.__dict__ = json.load(f)
 
 desired_width = 320
 pd.set_option('display.width', desired_width)
@@ -57,7 +66,6 @@ def fc_range(fc):
 
 
 FC_levels = list(fc_range(fc_levels))
-print(FC_levels)
 
 
 def f(a, b, *kwargs):
@@ -97,6 +105,7 @@ def createfctable(file):
 	df_sorted = df1.sort_values(by=['expected_count'], ascending=True)
 	# Set the classes of expression level
 	levels = expression_levels(exp_levels)
+	print('sampling genes... ')
 	# divide the dataframe into quantiles and randomly sample the number of genes specified from each class
 	df_genes = df_sorted.groupby(pd.qcut(df_sorted.expected_count, len(levels), labels=levels)).apply(
 		lambda x: x.sample(genes*len(levels)))
@@ -104,20 +113,20 @@ def createfctable(file):
 	df_genes.reset_index(inplace=True)
 	df_diagnostic = df_genes.iloc[:, [2, 6, 0]]
 	df_diagnostic = df_diagnostic.rename(columns={'expected_count':'expression_class'})
-
+	print('applying fold_changes to genes')
 	fc_list = assignfctogenes(df_diagnostic.expression_class, FC_levels, genes)
 	df_diagnostic['FC'] = pd.DataFrame(fc_list)
 	df_diagnostic['control_count'] = df_diagnostic.apply(lambda x: f(x.reference_count, x.FC, 'up'), axis=1)
 	df_diagnostic['experiment_count'] = df_diagnostic.apply(lambda x: f(x.reference_count, x.FC, 'down'), axis=1)
 	df_diagnostic['E/C'] = df_diagnostic['experiment_count'] / df_diagnostic['control_count']
-
+	print('generating background data')
 	# Subtract the selected genes to be differentially expressed from the original count matrix
 	background = pd.merge(df_sorted, df_diagnostic, indicator=True, how='outer')\
 		.query('_merge=="left_only"').drop('_merge', axis=1)
 	df_background = background.iloc[:, [0, 4]]
 	df_control = df_diagnostic.iloc[:, [0, 4]]
 	df_experiment = df_diagnostic.iloc[:, [0, 5]]
-	
+	df_diagnostic.to_csv(r'transcript_list.csv', header=True, index=True, sep=',', mode='a+')
 	return df_background, df_control, df_experiment
 
 
@@ -198,6 +207,9 @@ def main():
 	basename = str(os.path.basename(modelName))
 	os.symlink(refdatabase, basename)
 	pyfaidx.Faidx(basename)
+	print('reading reference file: ' + str(refdatabase) + "\n")
+	print('Indexing reference file....' + "\n")
+
 	cwd = os.getcwd()
 	indexFile = ''
 	for file in os.listdir(cwd):
@@ -206,6 +218,7 @@ def main():
 			
 	refindex = parseIndexRef(indexFile)
 	df = createfctable(table)
+	print('reading count matrix: ' + str(table))
 	background_model = create_model(refindex, df[0], 'background')
 	control_model = create_model(refindex, df[1], 'control')
 	experiment_model = create_model(refindex, df[2], 'experiment')
@@ -213,12 +226,16 @@ def main():
 	experiment = experiment_model.to_records(index=False)
 	background = background_model.to_records(index=False)
 	records = [background, control, experiment]
+	print('writing model to disk... ')
 	outf = modelName + '.p'
 	output = open(outf, 'wb')
 	pickle.dump(records, output)
 
 	os.remove(basename)
 	os.remove(indexFile)
+	print('Model generation is complete')
+	end_time = datetime.now()
+	print('Duration: {}'.format(end_time - start_time))
 
 
 if __name__ == '__main__':

@@ -174,7 +174,6 @@ def assemble_reads(Seq, counts, readlen, qmodel, kwargs):
 
 	sim_data = []
 	if kwargs == 'se':
-		counter = 0
 		for seq, r in zip(Seq, counts):
 			readinfo = GenerateRead(seq, readlen, r, 'SE')
 			startpos = readinfo[0]
@@ -183,12 +182,12 @@ def assemble_reads(Seq, counts, readlen, qmodel, kwargs):
 				header = output.assemble_Illumina_line(instrument='rsdsv0.1', single_end=True)
 				read = seq[int(i):int(j)]
 				quality_string = sample_qualscore(qmodel)
-				# output.write_fastq(filename, header, read, quality_string, single_end=True)
 				records = header, read, quality_string
 				sim_data.append(records)
 
 	elif kwargs == 'pe':
 		for seq, r in zip(Seq, counts):
+
 			readinfo = GenerateRead(seq, readlen, r, 'PE')
 			startpos = readinfo[0]
 			endpos = readinfo[1]
@@ -200,7 +199,7 @@ def assemble_reads(Seq, counts, readlen, qmodel, kwargs):
 				R1.append(''.join(data[0]))
 				R2.append(''.join(data[1]))
 			for index, (r1, r2) in enumerate(zip(R1, R2)):
-				header = output.assemble_Illumina_line(instrument='HiSeq2500', single_end=False)
+				header = output.assemble_Illumina_line(instrument='rsdsv0.1', single_end=False)
 				quality_string = sample_qualscore(qmodel)
 				reads = (r1, r2)
 				records = (header, reads, quality_string)
