@@ -5,8 +5,18 @@
 import platform, socket, re, uuid, json, psutil, logging
 import datetime
 import random
+import gzip
 import os
 import sys
+
+
+directory = './RSDSv1.0.sim'
+logfile = "RSDSv1.0_simreport.txt"
+file_path = os.path.join(directory, logfile)
+if not os.path.isdir(directory):
+	os.mkdir(directory)
+
+# file = open(file_path, "w")
 
 # with open('RSDSv1.0_simreport.txt', 'a+') as f:
 #     json.dump(args.__dict__, f, indent=2)
@@ -43,11 +53,11 @@ def generatefilename(name, zipped, single_end):
 
 	now = datetime.datetime.now()
 	date_time_obj = datetime.datetime.strftime(now, '%Y%m%d-%H%M')
-
+	file_path = os.path.join(directory, name)
 	if name is None:
 		name = 'RSDSdataset'
 
-	basename = "{}_{}".format(name, date_time_obj)
+	basename = "{}_{}".format(file_path, date_time_obj)
 	lib_type1 = basename + "_1.fastq" + (".gz" if zipped else "")
 	if single_end:
 		return lib_type1
@@ -62,17 +72,17 @@ def write_fastq(filename, read_data, single_end):
 
 	if single_end:
 		outfilename = generatefilename(name=filename, zipped=True, single_end=True)
-
-		with open(outfilename, 'a+') as handle:
+		# file_path = os.path.join(directory, outfilename)
+		with gzip.open(outfilename, 'a+') as handle:
 			for i in read_data:
-				handle.write('{}\n{}\n+\n{}\n'.format(i[0], i[1], i[2]))
+				handle.write('{}\n{}\n+\n{}\n'.format(i[0], i[1], i[2]).encode())
 
 	if not single_end:
 		outfilename = generatefilename(name=filename, zipped=True, single_end=False)
-		with open(outfilename[0], 'a+') as f1, open(outfilename[1], 'a') as f2:
+		with gzip.open(outfilename[0], 'a+') as f1, gzip.open(outfilename[1], 'a') as f2:
 			for i in read_data:
-				f1.write('{}\n{}\n+\n{}\n'.format(i[0][0], i[1][0], i[2]))
-				f2.write('{}\n{}\n+\n{}\n'.format(i[0][1], i[1][1], i[2]))
+				f1.write('{}\n{}\n+\n{}\n'.format(i[0][0], i[1][0], i[2]).encode())
+				f2.write('{}\n{}\n+\n{}\n'.format(i[0][1], i[1][1], i[2]).encode())
 
 	return outfilename
 
@@ -80,7 +90,7 @@ def write_fastq(filename, read_data, single_end):
 def add_simreads(filenames, simdata, single_end, simdata2=None):
 
 	if single_end:
-		with open(filenames[0], 'a') as f1, open(filenames[1], 'a') as f2:
+		with gzip.open(filenames[0], 'a') as f1, gzip.open(filenames[1], 'a') as f2:
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
@@ -90,21 +100,21 @@ def add_simreads(filenames, simdata, single_end, simdata2=None):
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f2.write('{}\n{}\n+\n{}\n'.format(header, reads, qual))
+				f2.write('{}\n{}\n+\n{}\n'.format(header, reads, qual).encode())
 	else:
-		with open(filenames[0][0], 'a+') as f1, open(filenames[0][1], 'a+') as f2, open(filenames[1][0], 'a+') as f3, open(filenames[1][1], 'a+') as f4:
+		with gzip.open(filenames[0][0], 'a+') as f1, gzip.open(filenames[0][1], 'a+') as f2, gzip.open(filenames[1][0], 'a+') as f3, gzip.open(filenames[1][1], 'a+') as f4:
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f1.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual))
-				f2.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual))
+				f1.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual).encode())
+				f2.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual).encode())
 			for rec in simdata2:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f3.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual))
-				f4.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual))
+				f3.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual).encode())
+				f4.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual).encode())
 
 
 class Stats(dict):
@@ -131,11 +141,11 @@ def genelist(model):
 	return genelist
 
 
-def write_simreport():
+def write_simreport(filepath):
 
 	""" Create and write a report for a run of RSDS"""
 
-	with open('RSDSv1.0_simreport.txt', 'w') as handle:
+	with open(filepath, 'w') as handle:
 
 		now = datetime.datetime.now()
 		date_time_obj = datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S.%f')
@@ -162,6 +172,8 @@ def write_simreport():
 		handle.write(parameter_values)
 
 
+write_simreport(file_path)
+
 def getSystemInfo():
     try:
         info={}
@@ -180,7 +192,6 @@ def getSystemInfo():
 
 
 json.loads(getSystemInfo())
-write_simreport()
 
 
 def simulation_statistics():
