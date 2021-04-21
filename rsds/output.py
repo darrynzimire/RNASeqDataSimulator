@@ -16,15 +16,6 @@ file_path = os.path.join(directory, logfile)
 if not os.path.isdir(directory):
 	os.mkdir(directory)
 
-# file = open(file_path, "w")
-
-# with open('RSDSv1.0_simreport.txt', 'a+') as f:
-#     json.dump(args.__dict__, f, indent=2)
-#
-#
-# with open('commandline_args.txt', 'r') as f:
-#     args.__dict__ = json.load(f)
-
 
 def assemble_Illumina_line(instrument, single_end):
 
