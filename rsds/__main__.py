@@ -74,6 +74,12 @@ se_class = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
 #
 # 	return myQual
 
+def sample_qualscore(sequencingModel):
+
+	(myQual, myErrors) = se_class.getSequencingErrors(sequencingModel)
+
+	return myQual
+
 
 def main():
 
