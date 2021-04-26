@@ -64,16 +64,16 @@ def write_fastq(filename, read_data, single_end):
 	if single_end:
 		outfilename = generatefilename(name=filename, zipped=True, single_end=True)
 		# file_path = os.path.join(directory, outfilename)
-		with gzip.open(outfilename, 'a+') as handle:
+		with open(outfilename, 'a+') as handle:
 			for i in read_data:
-				handle.write('{}\n{}\n+\n{}\n'.format(i[0], i[1], i[2]).encode())
+				handle.write('{}\n{}\n+\n{}\n'.format(i[0], i[1], i[2]))
 
 	if not single_end:
 		outfilename = generatefilename(name=filename, zipped=True, single_end=False)
-		with gzip.open(outfilename[0], 'a+') as f1, gzip.open(outfilename[1], 'a') as f2:
+		with open(outfilename[0], 'a+') as f1, open(outfilename[1], 'a') as f2:
 			for i in read_data:
-				f1.write('{}\n{}\n+\n{}\n'.format(i[0][0], i[1][0], i[2]).encode())
-				f2.write('{}\n{}\n+\n{}\n'.format(i[0][1], i[1][1], i[2]).encode())
+				f1.write('{}\n{}\n+\n{}\n'.format(i[0][0], i[1][0], i[2]))
+				f2.write('{}\n{}\n+\n{}\n'.format(i[0][1], i[1][1], i[2]))
 
 	return outfilename
 
@@ -81,7 +81,7 @@ def write_fastq(filename, read_data, single_end):
 def add_simreads(filenames, simdata, single_end, simdata2=None):
 
 	if single_end:
-		with gzip.open(filenames[0], 'a') as f1, gzip.open(filenames[1], 'a') as f2:
+		with open(filenames[0], 'a') as f1, open(filenames[1], 'a') as f2:
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
@@ -91,21 +91,21 @@ def add_simreads(filenames, simdata, single_end, simdata2=None):
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f2.write('{}\n{}\n+\n{}\n'.format(header, reads, qual).encode())
+				f2.write('{}\n{}\n+\n{}\n'.format(header, reads, qual))
 	else:
-		with gzip.open(filenames[0][0], 'a+') as f1, gzip.open(filenames[0][1], 'a+') as f2, gzip.open(filenames[1][0], 'a+') as f3, gzip.open(filenames[1][1], 'a+') as f4:
+		with open(filenames[0][0], 'a+') as f1, open(filenames[0][1], 'a+') as f2, open(filenames[1][0], 'a+') as f3, open(filenames[1][1], 'a+') as f4:
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f1.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual).encode())
-				f2.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual).encode())
+				f1.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual))
+				f2.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual))
 			for rec in simdata2:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f3.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual).encode())
-				f4.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual).encode())
+				f3.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual))
+				f4.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual))
 
 
 class Stats(dict):
@@ -176,7 +176,7 @@ def getSystemInfo():
         info['ip-address']=socket.gethostbyname(socket.gethostname())
         info['mac-address']=':'.join(re.findall('..', '%012x' % uuid.getnode()))
         info['processor']=platform.processor()
-        info['ram']=str(round(psutil.virtual_memory().total / (1024.0 **3)))+" GB"
+        info['ram']=str(round(psutil.virtual_memory().total / (1024.0 ** 3)))+" GB"
         return json.dumps(info)
     except Exception as e:
         logging.exception(e)
