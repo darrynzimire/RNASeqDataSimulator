@@ -709,13 +709,13 @@ class SequenceContainer:
 		return rOut
 
 
-#
-#	Container for read data, computes quality scores and positions to insert errors
-#
 class ReadContainer:
+
 	def __init__(self, readLen, errorModel, reScaledError):
 
 		self.readLen = readLen
+		# self.errorDat = errorDat
+		# self.reScaledError = reScaledError
 
 		errorDat = pickle.load(open(errorModel, 'rb'))
 		self.UNIFORM = False
@@ -840,7 +840,7 @@ class ReadContainer:
 			# errorOut = (type, len, pos, ref, alt)
 
 			if isSub:								# insert substitution error
-				myNucl  = chr(readData[ind])
+				myNucl  = chr(self.err[ind])
 				newNucl = self.errSSE[NUC_IND[myNucl]].sample()
 				sOut.append(('S',1,ind,myNucl,newNucl))
 			else:									# insert indel error
