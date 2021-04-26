@@ -4,21 +4,14 @@ import numpy as np
 import random
 from Bio.Seq import Seq
 from rsds import output
-# from rsds import SequenceContainer
-from rsds.__main__ import sample_qualscore
 
 
-# SE_class = SequenceContainer.ReadContainer(m.readlen, m.sqmodel, m.SE_RATE)
+def sample_qualscore(se_class, qmodel):
 
-#
-# def sample_qualscore(readlen, sqmodel, SE_RATE=-1):
-#
-# 	SE_class = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
-#
-# 	(myQual, myErrors) = SE_class.getSequencingErrors(sqmodel)
-# 	# print(myQual)
-# 	return myQual
-#
+	(myQual, myErrors) = se_class.getSequencingErrors(qmodel)
+
+	return myQual
+
 
 def scalereadnum(read_counts, n):
 	sc = []
@@ -186,7 +179,7 @@ def get_reads(record):
 	return reads
 
 
-def assemble_reads(Seq, counts, readlen, qmodel, kwargs):
+def assemble_reads(Seq, counts, readlen, qmodel, se_class,  kwargs):
 
 	sim_data = []
 	if kwargs == 'se':
@@ -197,7 +190,7 @@ def assemble_reads(Seq, counts, readlen, qmodel, kwargs):
 			for index, (i, j) in enumerate(zip(startpos[0], endpos[0])):
 				header = output.assemble_Illumina_line(instrument='rsdsv0.1', single_end=True)
 				read = seq[int(i):int(j)]
-				quality_string = sample_qualscore(qmodel)
+				quality_string = sample_qualscore(se_class, qmodel)
 				records = header, read, quality_string
 				sim_data.append(records)
 
@@ -216,7 +209,7 @@ def assemble_reads(Seq, counts, readlen, qmodel, kwargs):
 				R2.append(''.join(data[1]))
 			for index, (r1, r2) in enumerate(zip(R1, R2)):
 				header = output.assemble_Illumina_line(instrument='rsdsv0.1', single_end=False)
-				quality_string = sample_qualscore(qmodel)
+				quality_string = sample_qualscore(se_class, qmodel)
 				reads = (r1, r2)
 				records = (header, reads, quality_string)
 				sim_data.append(records)
