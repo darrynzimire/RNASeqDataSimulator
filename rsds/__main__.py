@@ -65,14 +65,9 @@ diffmodel = args.diff
 SE_RATE = args.er
 
 start_time = datetime.now()
+
 se_class = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
-
-
-def sample_qualscore(sequencingModel):
-
-	(myQual, myErrors) = se_class.getSequencingErrors(sequencingModel)
-
-	return myQual
+# (myQual, myErrors) = se_class.getSequencingErrors(sqmodel)
 
 
 def main():
@@ -98,31 +93,31 @@ def main():
 
 	if args.se and countModel == None and diffmodel==None:
 		print('running single-end in default mode')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'se', model=None, diff=None, readtot=readtot, fragmodel=None)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class, 'se', model=None, diff=None, readtot=readtot, fragmodel=None)
 	elif args.se and countModel != None and diffmodel==None:
 		print('running single-end in empirical profile mode')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'se', model=countModel, diff=None, readtot=readtot, fragmodel=None)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class,'se', model=countModel, diff=None, readtot=readtot, fragmodel=None)
 	elif args.se and countModel == None and diffmodel != None:
 		print('running single-end in differential expression mode')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'se', model=None,diff=diffmodel, readtot=readtot, fragmodel=None)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class,'se', model=None,diff=diffmodel, readtot=readtot, fragmodel=None)
 	elif args.pe and countModel == None and diffmodel==None and fragmodel == None:
 		print('running paired-end in default mode with no FL model')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'pe', model=None, diff=None,  readtot=readtot, fragmodel=None)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class,'pe', model=None, diff=None,  readtot=readtot, fragmodel=None)
 	elif args.pe and countModel == None and diffmodel==None and fragmodel != None:
 		print('running paired-end in default mode with FL model')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'pe', model=None, diff=None,  readtot=readtot, fragmodel=fragmodel)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class, 'pe', model=None, diff=None,  readtot=readtot, fragmodel=fragmodel)
 	elif args.pe and countModel != None and diffmodel==None and fragmodel ==None:
 		print('running paired-end in empirical profile mode with no FL model')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'pe', model=countModel, diff=None,  readtot=readtot, fragmodel=None)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class, 'pe', model=countModel, diff=None,  readtot=readtot, fragmodel=None)
 	elif args.pe and countModel != None and diffmodel==None and fragmodel != None:
 		print('running paired-end in empirical profile mode with FL model')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'pe', model=None, diff=None,  readtot=readtot, fragmodel=fragmodel)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class,'pe', model=None, diff=None,  readtot=readtot, fragmodel=fragmodel)
 	elif args.pe and countModel == None and diffmodel !=None and fragmodel ==None:
 		print('running paired-end in differential mode with no FL model')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'pe', model=None, diff=diffmodel, readtot=readtot, fragmodel=None)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class, 'pe', model=None, diff=diffmodel, readtot=readtot, fragmodel=None)
 	elif args.pe and countModel == None and diffmodel !=None and fragmodel != None:
 		print('running paired-end in differential mode with FL model')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, 'pe', model=countModel, diff=diffmodel,  readtot=readtot, fragmodel=fragmodel)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class, 'pe', model=countModel, diff=diffmodel,  readtot=readtot, fragmodel=fragmodel)
 
 	os.remove(basename)
 	os.remove(indexFile)
