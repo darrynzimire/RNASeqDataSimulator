@@ -4,7 +4,7 @@ import numpy as np
 import random
 from Bio.Seq import Seq
 from rsds import output
-import SequenceContainer
+from rsds import SequenceContainer
 from rsds.main import se_class, sqmodel
 
 
