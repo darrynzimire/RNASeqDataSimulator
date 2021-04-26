@@ -66,8 +66,8 @@ SE_RATE = args.er
 
 start_time = datetime.now()
 se_class = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
-#
-#
+
+
 # def sample_qualscore(sequencingModel):
 #
 # 	(myQual, myErrors) = se_class.getSequencingErrors(sequencingModel)
