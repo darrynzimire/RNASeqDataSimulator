@@ -4,19 +4,21 @@ import numpy as np
 import random
 from Bio.Seq import Seq
 from rsds import output
-from rsds import SequenceContainer
-from rsds.__main__ import se_class, sqmodel
+# from rsds import SequenceContainer
+from rsds.__main__ import sample_qualscore
 
 
 # SE_class = SequenceContainer.ReadContainer(m.readlen, m.sqmodel, m.SE_RATE)
 
-
-def sample_qualscore(sqmodel):
-
-	(myQual, myErrors) = se_class.getSequencingErrors(sqmodel)
-
-	return myQual
-
+#
+# def sample_qualscore(readlen, sqmodel, SE_RATE=-1):
+#
+# 	SE_class = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
+#
+# 	(myQual, myErrors) = SE_class.getSequencingErrors(sqmodel)
+# 	# print(myQual)
+# 	return myQual
+#
 
 def scalereadnum(read_counts, n):
 	sc = []
