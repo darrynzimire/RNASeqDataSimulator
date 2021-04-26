@@ -16,14 +16,6 @@ from shutil import copyfile
 errlog = logging.getLogger("ErrLog")
 
 
-
-# def sample_qualscore(sequencingModel):
-#
-# 	(myQual, myErrors) = se_class.getSequencingErrors(sequencingModel)
-#
-# 	return myQual
-
-
 def defaultfragsize(fragment_size, fragment_std, counts):
 
 	RFS = []
@@ -216,7 +208,6 @@ def makefraglendist(fmodel, readtot, readlen, counts, transcript_sequences):
 		fraglendist.append(randomFS)
 
 	return fraglendist
-
 
 
 def compilefastqrecord(readlen, reference, refindex, qmodel, filename, se_class, kwargs, model=None, diff=None, readtot=None, fragmodel=None):
