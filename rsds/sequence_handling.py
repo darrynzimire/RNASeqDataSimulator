@@ -3,8 +3,19 @@
 import numpy as np
 import random
 from Bio.Seq import Seq
-from rsds.__main__ import sample_qualscore
 from rsds import output
+import SequenceContainer
+from rsds.main import se_class, sqmodel
+
+
+# SE_class = SequenceContainer.ReadContainer(m.readlen, m.sqmodel, m.SE_RATE)
+
+
+def sample_qualscore(sqmodel):
+
+	(myQual, myErrors) = se_class.getSequencingErrors(sqmodel)
+
+	return myQual
 
 
 def scalereadnum(read_counts, n):
@@ -71,6 +82,7 @@ def getseq(reference, key, start=1, end=None):
 
 
 def processTransIDs(refFile, ids):
+
 	""""
 	Description:
 	This function take as input a list of transcript ids and converts it to a dictionary
@@ -94,10 +106,12 @@ def processTransIDs(refFile, ids):
 		Transseq.append(seq)
 
 	new_dict = {k: v for k, v in zip(header, Transseq)}
+
 	return new_dict
 
 
 def GenerateRead(seq, readLen, n, *args):
+
 	"""
 	Description:
 	This function truncates transcript sequences by a specified read length.
