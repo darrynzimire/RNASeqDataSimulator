@@ -7,12 +7,21 @@ import itertools
 import random
 from rsds import distributions, output
 from rsds import sequence_handling
+from rsds import SequenceContainer
 import sys
 import logging.handlers
 from shutil import copyfile
 
 
 errlog = logging.getLogger("ErrLog")
+
+
+
+# def sample_qualscore(sequencingModel):
+#
+# 	(myQual, myErrors) = se_class.getSequencingErrors(sequencingModel)
+#
+# 	return myQual
 
 
 def defaultfragsize(fragment_size, fragment_std, counts):
