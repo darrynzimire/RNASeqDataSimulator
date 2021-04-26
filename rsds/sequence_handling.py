@@ -5,7 +5,7 @@ import random
 from Bio.Seq import Seq
 from rsds import output
 from rsds import SequenceContainer
-from rsds.main import se_class, sqmodel
+from rsds.__main__ import se_class, sqmodel
 
 
 # SE_class = SequenceContainer.ReadContainer(m.readlen, m.sqmodel, m.SE_RATE)
