@@ -43,7 +43,7 @@ def get_arguments():
 	parser.add_argument('-er',	type=float, 		required=False, 	default=-1)
 	parser.add_argument('-fl',	nargs=2, 		 						default=(250, 25))
 	parser.add_argument('-flm', type=str, 			required=False)
-	parser.add_argument('-diff', type=str,            required=False)
+	parser.add_argument('-diff', type=str,          required=False)
 	parser.add_argument('-se', action='store_true', required=False)
 	parser.add_argument('-pe', action='store_true', required=False)
 
@@ -66,13 +66,13 @@ SE_RATE = args.er
 
 start_time = datetime.now()
 se_class = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
-
-
-def sample_qualscore(sequencingModel):
-
-	(myQual, myErrors) = se_class.getSequencingErrors(sequencingModel)
-
-	return myQual
+#
+#
+# def sample_qualscore(sequencingModel):
+#
+# 	(myQual, myErrors) = se_class.getSequencingErrors(sequencingModel)
+#
+# 	return myQual
 
 
 def main():
