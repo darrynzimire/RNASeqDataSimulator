@@ -218,7 +218,8 @@ def makefraglendist(fmodel, readtot, readlen, counts, transcript_sequences):
 	return fraglendist
 
 
-def compilefastqrecord(readlen, reference, refindex, qmodel, filename, kwargs, model=None, diff=None, readtot=None, fragmodel=None):
+
+def compilefastqrecord(readlen, reference, refindex, qmodel, filename, se_class, kwargs, model=None, diff=None, readtot=None, fragmodel=None):
 
 	global counts
 
@@ -228,7 +229,7 @@ def compilefastqrecord(readlen, reference, refindex, qmodel, filename, kwargs, m
 		defcounts = list(itertools.chain.from_iterable(default_data[1]))
 
 		if kwargs is 'se':
-			sim_data = sequence_handling.assemble_reads(default_data[0], defcounts, readlen, qmodel, kwargs)
+			sim_data = sequence_handling.assemble_reads(default_data[0], defcounts, readlen, qmodel,se_class, kwargs)
 			output.write_fastq(filename, sim_data, single_end=True)
 
 		elif kwargs is 'pe':
@@ -236,7 +237,7 @@ def compilefastqrecord(readlen, reference, refindex, qmodel, filename, kwargs, m
 				counts = defaultfragsize(250, 25, defcounts)
 			else:
 				counts = makefraglendist(fragmodel, readtot, readlen, defcounts, default_data[0])
-			sim_data = sequence_handling.assemble_reads(default_data[0], counts, readlen, qmodel, kwargs)
+			sim_data = sequence_handling.assemble_reads(default_data[0], counts, readlen, qmodel, se_class, kwargs)
 			output.write_fastq('rsdsv0.1', sim_data, single_end=False)
 
 	elif model != None and diff==None:
@@ -252,13 +253,13 @@ def compilefastqrecord(readlen, reference, refindex, qmodel, filename, kwargs, m
 			seq = get_trans_sequences(profile_data[0], reference)
 
 		if kwargs is 'se':
-			sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+			sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
 		elif kwargs is 'pe':
 			if fragmodel is None:
 				counts = defaultfragsize(250, 25, counts)
 			else:
 				counts = makefraglendist(fragmodel, readtot, readlen, counts, seq)
-			sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+			sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
 
 	elif model == None and diff != None:
 
@@ -266,16 +267,16 @@ def compilefastqrecord(readlen, reference, refindex, qmodel, filename, kwargs, m
 		allfilenames = []
 		if kwargs is 'se':
 			seq, counts = diff_data['background']
-			background_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+			background_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
 			outfilename = output.write_fastq('grp1', background_data, single_end=True)
 			cfile = output.generatefilename(name='grp2', zipped=True, single_end=True)
 			copyfile(outfilename, cfile)
 			allfilenames.append(outfilename)
 			allfilenames.append(cfile)
 			seq, counts = diff_data['control']
-			control_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+			control_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
 			seq, counts = diff_data['experiment']
-			exp_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, kwargs)
+			exp_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
 			output.add_simreads(allfilenames, control_data, single_end=True, simdata2=exp_data)
 
 		elif kwargs is 'pe':
@@ -285,7 +286,7 @@ def compilefastqrecord(readlen, reference, refindex, qmodel, filename, kwargs, m
 				fcounts = defaultfragsize(250, 25, counts)
 			else:
 				fcounts = makefraglendist(fragmodel, readtot, readlen, counts, seq)
-			background_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, kwargs)
+			background_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, se_class, kwargs)
 			outfile1 = output.write_fastq('grp1', background_data, single_end=False)
 			cfile = output.generatefilename(name='grp2', zipped=True, single_end=False)
 			copyfile(outfile1[0], cfile[0])
@@ -293,9 +294,9 @@ def compilefastqrecord(readlen, reference, refindex, qmodel, filename, kwargs, m
 			allfilenames.append(outfile1)
 			allfilenames.append(cfile)
 			seq, counts = diff_data['control']
-			control_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, kwargs)
+			control_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, se_class, kwargs)
 			seq, counts = diff_data['experiment']
-			exp_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, kwargs)
+			exp_data = sequence_handling.assemble_reads(seq, fcounts, readlen, qmodel, se_class, kwargs)
 			output.add_simreads(allfilenames, control_data, single_end=False, simdata2=exp_data)
 
 
