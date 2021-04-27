@@ -44,8 +44,8 @@ def get_arguments():
 	parser.add_argument('-fl',	nargs=2, 		 						metavar='<(mean, std)', default=(250, 25), help='parameters for theoretical fragment length distribution')
 	parser.add_argument('-flm', type=str, 			required=False,     metavar='<str>',                help='fragment-length distribution model')
 	parser.add_argument('-diff', type=str,          required=False,     metavar='<str>',                help='differential expression model')
-	parser.add_argument('-se', action='store_true', required=False,     metavar='<str>',                help='library type: single_end')
-	parser.add_argument('-pe', action='store_true', required=False,     metavar='<str>',                help='library-type: paired-end')
+	parser.add_argument('-se', action='store_true', required=False,                     help='library type: single_end')
+	parser.add_argument('-pe', action='store_true', required=False,                     help='library-type: paired-end')
 
 	return parser
 
