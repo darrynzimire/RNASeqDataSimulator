@@ -33,19 +33,19 @@ def get_arguments():
 	
 	parser = argparse.ArgumentParser()
 	
-	parser.add_argument('-r', 	type=int, 			required=False, 	default=101)
-	parser.add_argument('-n', 	type=int, 			required=False)
-	parser.add_argument('-f', 	type=str, 			required=False)
-	parser.add_argument('-s', 	type=int, 			required=False, 	default=1223)
-	parser.add_argument('-o', 	type=str, 			required=False)
-	parser.add_argument('-q', 	type=str, 			required=False)
-	parser.add_argument('-c', 	type=str, 			required=False)
-	parser.add_argument('-er',	type=float, 		required=False, 	default=-1)
-	parser.add_argument('-fl',	nargs=2, 		 						default=(250, 25))
-	parser.add_argument('-flm', type=str, 			required=False)
-	parser.add_argument('-diff', type=str,          required=False)
-	parser.add_argument('-se', action='store_true', required=False)
-	parser.add_argument('-pe', action='store_true', required=False)
+	parser.add_argument('-r', 	type=int, 			required=False,     metavar='<int>', 	default=101,    help='desired read length')
+	parser.add_argument('-n', 	type=int, 			required=False,     metavar='<int>',                   help='number of reads or sequencing depth')
+	parser.add_argument('-f', 	type=str, 			required=False,     metavar='<str>', help='reference transcript FASTA database')
+	parser.add_argument('-s', 	type=int, 			required=False,     metavar='<int>',        default=1223,   help='random seed value for reproducibility')
+	parser.add_argument('-o', 	type=str, 			required=False,     metavar='<str>',                    help=' output file prefix')
+	parser.add_argument('-q', 	type=str, 			required=False,     metavar='<str>',                help='Phred quality model')
+	parser.add_argument('-c', 	type=str, 			required=False,     metavar='<str>',                help='empirical transcript expression model')
+	parser.add_argument('-er',	type=float, 		required=False, 	metavar='<float>',      default=-1,     help='error rate')
+	parser.add_argument('-fl',	nargs=2, 		 						metavar='<(mean, std)', default=(250, 25), help='parameters for theoretical fragment length distribution')
+	parser.add_argument('-flm', type=str, 			required=False,     metavar='<str>',                help='fragment-length distribution model')
+	parser.add_argument('-diff', type=str,          required=False,     metavar='<str>',                help='differential expression model')
+	parser.add_argument('-se', action='store_true', required=False,     metavar='<str>',                help='library type: single_end')
+	parser.add_argument('-pe', action='store_true', required=False,     metavar='<str>',                help='library-type: paired-end')
 
 	return parser
 
@@ -66,8 +66,15 @@ SE_RATE = args.er
 
 start_time = datetime.now()
 
-se_class = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
-# (myQual, myErrors) = se_class.getSequencingErrors(sqmodel)
+
+if (len(sys.argv) == 1):
+	man.manpage()
+	sys.exit()
+
+else:
+
+	se_class = SequenceContainer.ReadContainer(readlen, sqmodel, SE_RATE)
+
 
 def sample_qualscore(sequencingModel):
 
@@ -77,6 +84,7 @@ def sample_qualscore(sequencingModel):
 
 
 def main():
+
 
 	if ref == None:
 		man.manpage()
