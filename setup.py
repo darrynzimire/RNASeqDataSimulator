@@ -38,6 +38,7 @@ setuptools.setup(
 			'rsds-learn-qmodel = rsds.tools.learn_Qmodel:main',
 			'rsds-learn-FLmodel = rsds.tools.learn_FLmodel:main',
 			'rsds-learn-profile = rsds.tools.Transcript_Expression_Profiling:main'
+			'rsds-diff = rsds.tools.differential_exp:main'
 
 		]},
 )

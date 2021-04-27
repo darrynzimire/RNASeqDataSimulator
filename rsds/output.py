@@ -7,7 +7,6 @@ import datetime
 import random
 import gzip
 import os
-import sys
 
 
 directory = './RSDSv1.0.sim'

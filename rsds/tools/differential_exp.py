@@ -16,13 +16,13 @@ import os
 import re
 
 parser = argparse.ArgumentParser(description='two-group DE')
-parser.add_argument('--ref', 			type=str, 		required=True)
-parser.add_argument('--countmatrix', 	type=str, 		required=True)
-parser.add_argument('--n_genes', 		type=int, 		required=False, default=5)
-parser.add_argument('--exp_levels', 	type=int, 		required=False, default=6)
-parser.add_argument('--fold_changes', nargs=3,  type=float, metavar='(min, max, step)',  required=False, default=(3.0, 6.0, 0.5))
-parser.add_argument('--output', 		type=str, 		required=False)
-parser.add_argument('--seed', type=int, default=1234)
+parser.add_argument('--ref', 			type=str, 		required=True,  metavar='<str>', help='reference transcript FASTA database')
+parser.add_argument('--countmatrix', 	type=str, 		required=True, metavar='<str>', help='empirical transcript count file')
+parser.add_argument('--n_genes', 		type=int, 		required=False, metavar='<int>', default=5, help='number of genes')
+parser.add_argument('--exp_levels', 	type=int, 		required=False, metavar='<int>', default=6, help='number of expression levels')
+parser.add_argument('--fold_changes', nargs=3,  type=float, metavar='(min, max, step)',  required=False, default=(3.0, 6.0, 0.5), help='desired fold_changes')
+parser.add_argument('--output', 		type=str, 		required=False, metavar='<str>', help='output file prefix')
+parser.add_argument('--seed', type=int, metavar='<int', default=1234, help='seed value for reproducibility')
 
 
 args = parser.parse_args()
