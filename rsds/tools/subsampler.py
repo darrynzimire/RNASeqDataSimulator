@@ -31,8 +31,8 @@ def randind(min, max, n):
 
 	dist = np.round(np.random.uniform(low=min, high=max, size=max))
 	sample = np.random.choice(dist, size=n, replace=False)
-	rand_ind = sorted(sample)
-	print(rand_ind)
+	rand_ind = np.array(sorted(sample)).astype(int)
+	print(type(rand_ind))
 	return rand_ind
 
 
@@ -51,14 +51,25 @@ def generatefilename(name, zipped, n, single_end):
 
 	return filenames
 
-#
-# def getseqrecord(file, index):
-#
-# 	if file.endswith('.gz'):
-# 		f = gzip.open(file, 'rb')
-# 	else:
-# 		f = open(file, 'r')
+
+def indexfile(file):
+
+	increment = 4
+	index = 0
+	totalreads = []
+
+	# if file.endswith('.gz'):
+	# 	f = gzip.open(file, 'rt')
+	# else:
+	f = open(file, 'r')
+	for line in f:
+		if (index % increment == 0):
+			totalreads.append(index/increment)
+		index +=1
+	print(totalreads)
+
+indexfile(f1)
 
 
 
-print(io.DEFAULT_BUFFER_SIZE)
+
