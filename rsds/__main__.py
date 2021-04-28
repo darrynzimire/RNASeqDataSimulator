@@ -1,5 +1,6 @@
 # encoding=utf-8
 
+
 import os, warnings
 import sys
 import pyfaidx
@@ -9,6 +10,7 @@ import argparse
 import logging.handlers
 from datetime import datetime
 from rsds import man
+import memory_profiler
 
 
 if not sys.warnoptions:
@@ -33,19 +35,19 @@ def get_arguments():
 	
 	parser = argparse.ArgumentParser()
 	
-	parser.add_argument('-r', 	type=int, 			required=False,     metavar='<int>', 	default=101,    help='desired read length')
-	parser.add_argument('-n', 	type=int, 			required=False,     metavar='<int>',                   help='number of reads or sequencing depth')
-	parser.add_argument('-f', 	type=str, 			required=False,     metavar='<str>', help='reference transcript FASTA database')
-	parser.add_argument('-s', 	type=int, 			required=False,     metavar='<int>',        default=1223,   help='random seed value for reproducibility')
-	parser.add_argument('-o', 	type=str, 			required=False,     metavar='<str>',                    help=' output file prefix')
-	parser.add_argument('-q', 	type=str, 			required=False,     metavar='<str>',                help='Phred quality model')
-	parser.add_argument('-c', 	type=str, 			required=False,     metavar='<str>',                help='empirical transcript expression model')
-	parser.add_argument('-er',	type=float, 		required=False, 	metavar='<float>',      default=-1,     help='error rate')
-	parser.add_argument('-fl',	nargs=2, 		 						metavar='<(mean, std)', default=(250, 25), help='parameters for theoretical fragment length distribution')
-	parser.add_argument('-flm', type=str, 			required=False,     metavar='<str>',                help='fragment-length distribution model')
-	parser.add_argument('-diff', type=str,          required=False,     metavar='<str>',                help='differential expression model')
-	parser.add_argument('-se', action='store_true', required=False,                     help='library type: single_end')
-	parser.add_argument('-pe', action='store_true', required=False,                     help='library-type: paired-end')
+	parser.add_argument('-r', 	type=int, 			required=False,     metavar='<int>',        default=101,        help='desired read length')
+	parser.add_argument('-n', 	type=int, 			required=False,     metavar='<int>',                            help='number of reads or sequencing depth')
+	parser.add_argument('-f', 	type=str, 			required=False,     metavar='<str>',                            help='reference transcript FASTA database')
+	parser.add_argument('-s', 	type=int, 			required=False,     metavar='<int>',        default=1223,       help='random seed value for reproducibility')
+	parser.add_argument('-o', 	type=str, 			required=False,     metavar='<str>',                            help=' output file prefix')
+	parser.add_argument('-q', 	type=str, 			required=False,     metavar='<str>',                            help='Phred quality model')
+	parser.add_argument('-c', 	type=str, 			required=False,     metavar='<str>',                            help='empirical transcript expression model')
+	parser.add_argument('-er',	type=float, 		required=False, 	metavar='<float>',      default=-1,         help='error rate')
+	parser.add_argument('-fl',	nargs=2, 		 						metavar='<(mean, std)', default=(250, 25),  help='parameters for theoretical fragment length distribution')
+	parser.add_argument('-flm', type=str, 			required=False,     metavar='<str>',        help='fragment-length distribution model')
+	parser.add_argument('-diff', type=str,          required=False,     metavar='<str>',        help='differential expression model')
+	parser.add_argument('-se', action='store_true', required=False,     help='library type: single_end')
+	parser.add_argument('-pe', action='store_true', required=False,     help='library-type: paired-end')
 
 	return parser
 
@@ -66,8 +68,7 @@ SE_RATE = args.er
 
 start_time = datetime.now()
 
-
-if (len(sys.argv) == 1):
+if len(sys.argv) == 1:
 	man.manpage()
 	sys.exit()
 
@@ -82,9 +83,7 @@ def sample_qualscore(sequencingModel):
 
 	return myQual
 
-
 def main():
-
 
 	if ref == None:
 		man.manpage()
