@@ -142,7 +142,7 @@ def main():
 if __name__ == '__main__':
 	main()
 	import cProfile
-	cProfile.run("sample_qualscore(sqmodel)", 'output.dat')
+	cProfile.run("main()", 'output.dat')
 
 	import pstats
 
