@@ -83,6 +83,7 @@ def sample_qualscore(sequencingModel):
 
 	return myQual
 
+
 def main():
 
 	if ref == None:
@@ -140,6 +141,20 @@ def main():
 
 
 if __name__ == '__main__':
-	main()
+	# main()
+	import cProfile
+	cProfile.run("main()", 'output.dat')
+
+	import pstats
+	from pstats import SortKey
+
+	with open('output_time.txt', 'w') as f:
+		p = pstats.Stats('output.dat', stream=f)
+		p.sort_stats("time").print_stats()
+
+	with open('output_calls.txt', 'w') as f:
+		p = pstats.Stats('output.dat', stream=f)
+		p.sort_stats('calls').print_stats()
+
 
 
