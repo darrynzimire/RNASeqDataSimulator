@@ -12,7 +12,6 @@ from datetime import datetime
 from rsds import man
 
 
-
 if not sys.warnoptions:
 	warnings.simplefilter("default")  # Change the filter in this process
 	os.environ["PYTHONWARNINGS"] = "default"  # Also affect subprocesses
@@ -141,12 +140,11 @@ def main():
 
 
 if __name__ == '__main__':
-	# main()
+	main()
 	import cProfile
-	cProfile.run("main()", 'output.dat')
+	cProfile.run("sample_qualscore(sqmodel)", 'output.dat')
 
 	import pstats
-	from pstats import SortKey
 
 	with open('output_time.txt', 'w') as f:
 		p = pstats.Stats('output.dat', stream=f)
