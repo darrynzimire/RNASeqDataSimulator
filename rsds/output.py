@@ -9,6 +9,8 @@ import gzip
 import os
 
 
+buffsize = 100000000 # 20MB
+
 directory = './RSDSv1.0.sim'
 logfile = "RSDSv1.0_simreport.txt"
 file_path = os.path.join(directory, logfile)
@@ -63,42 +65,51 @@ def write_fastq(filename, read_data, single_end):
 	if single_end:
 		outfilename = generatefilename(name=filename, zipped=True, single_end=True)
 		# file_path = os.path.join(directory, outfilename)
-		with open(outfilename, 'a+') as handle:
+		with open(outfilename, 'a+', buffering=buffsize) as handle:
 			for i in read_data:
 				handle.write('{}\n{}\n+\n{}\n'.format(i[0], i[1], i[2]))
-
+				handle.flush()
 	if not single_end:
 		outfilename = generatefilename(name=filename, zipped=True, single_end=False)
-		with open(outfilename[0], 'a+') as f1, open(outfilename[1], 'a') as f2:
+		with open(outfilename[0], 'a+', buffering=buffsize) as f1, open(outfilename[1], 'a', buffering=buffsize) as f2:
+			counter = 0
 			for i in read_data:
 				f1.write('{}\n{}\n+\n{}\n'.format(i[0][0], i[1][0], i[2]))
 				f2.write('{}\n{}\n+\n{}\n'.format(i[0][1], i[1][1], i[2]))
-
+				counter += 1
+				if counter >= 40000:
+					f1.flush()
+					f2.flush()
+					counter = 0
 	return outfilename
 
 
 def add_simreads(filenames, simdata, single_end, simdata2=None):
 
 	if single_end:
-		with open(filenames[0], 'a') as f1, open(filenames[1], 'a') as f2:
+		with open(filenames[0], 'a', buffering=buffsize) as f1, open(filenames[1], 'a', buffering=buffsize) as f2:
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
 				f1.write('{}\n{}\n+\n{}\n'.format(header, reads, qual))
+				f1.flush()
 			for rec in simdata2:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
 				f2.write('{}\n{}\n+\n{}\n'.format(header, reads, qual))
+				f2.flush()
 	else:
-		with open(filenames[0][0], 'a+') as f1, open(filenames[0][1], 'a+') as f2, open(filenames[1][0], 'a+') as f3, open(filenames[1][1], 'a+') as f4:
+		with open(filenames[0][0], 'a+', buffering=buffsize) as f1, open(filenames[0][1], 'a+', buffering=buffsize) as f2, open(filenames[1][0], 'a+', buffering=buffsize) as f3, open(filenames[1][1], 'a+', buffering=buffsize) as f4:
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
 				f1.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual))
+				f1.flush()
 				f2.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual))
+				f2.flush()
 			for rec in simdata2:
 				header = rec[0]
 				reads = rec[1]
@@ -135,7 +146,7 @@ def write_simreport(filepath):
 
 	""" Create and write a report for a run of RSDS"""
 
-	with open(filepath, 'w') as handle:
+	with open(filepath, 'w', buffering=buffsize) as handle:
 
 		now = datetime.datetime.now()
 		date_time_obj = datetime.datetime.strftime(now, '%Y-%m-%d %H:%M:%S.%f')
