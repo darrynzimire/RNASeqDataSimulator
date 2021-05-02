@@ -63,16 +63,16 @@ def write_fastq(filename, read_data, single_end):
 	if single_end:
 		outfilename = generatefilename(name=filename, zipped=True, single_end=True)
 		# file_path = os.path.join(directory, outfilename)
-		with open(outfilename, 'a+') as handle:
+		with gzip.open(outfilename, 'a+') as handle:
 			for i in read_data:
-				handle.write('{}\n{}\n+\n{}\n'.format(i[0], i[1], i[2]))
+				handle.write('{}\n{}\n+\n{}\n'.format(i[0], i[1], i[2]).encode())
 
 	if not single_end:
 		outfilename = generatefilename(name=filename, zipped=True, single_end=False)
-		with open(outfilename[0], 'a+') as f1, open(outfilename[1], 'a') as f2:
+		with gzip.open(outfilename[0], 'a+') as f1, gzip.open(outfilename[1], 'a') as f2:
 			for i in read_data:
-				f1.write('{}\n{}\n+\n{}\n'.format(i[0][0], i[1][0], i[2]))
-				f2.write('{}\n{}\n+\n{}\n'.format(i[0][1], i[1][1], i[2]))
+				f1.write('{}\n{}\n+\n{}\n'.format(i[0][0], i[1][0], i[2]).encode())
+				f2.write('{}\n{}\n+\n{}\n'.format(i[0][1], i[1][1], i[2]).encode())
 
 	return outfilename
 
@@ -80,7 +80,7 @@ def write_fastq(filename, read_data, single_end):
 def add_simreads(filenames, simdata, single_end, simdata2=None):
 
 	if single_end:
-		with open(filenames[0], 'a') as f1, open(filenames[1], 'a') as f2:
+		with gzip.open(filenames[0], 'a') as f1, gzip.open(filenames[1], 'a') as f2:
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
@@ -90,21 +90,21 @@ def add_simreads(filenames, simdata, single_end, simdata2=None):
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f2.write('{}\n{}\n+\n{}\n'.format(header, reads, qual))
+				f2.write('{}\n{}\n+\n{}\n'.format(header, reads, qual).encode())
 	else:
-		with open(filenames[0][0], 'a+') as f1, open(filenames[0][1], 'a+') as f2, open(filenames[1][0], 'a+') as f3, open(filenames[1][1], 'a+') as f4:
+		with gzip.open(filenames[0][0], 'a+') as f1, gzip.open(filenames[0][1], 'a+') as f2, gzip.open(filenames[1][0], 'a+') as f3, gzip.open(filenames[1][1], 'a+') as f4:
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f1.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual))
-				f2.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual))
+				f1.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual).encode())
+				f2.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual).encode())
 			for rec in simdata2:
 				header = rec[0]
 				reads = rec[1]
 				qual = rec[2]
-				f3.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual))
-				f4.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual))
+				f3.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual).encode())
+				f4.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual).encode())
 
 
 class Stats(dict):
