@@ -10,7 +10,7 @@ import argparse
 import logging.handlers
 from datetime import datetime
 from rsds import man
-import memory_profiler
+
 
 
 if not sys.warnoptions:
