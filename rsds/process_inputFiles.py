@@ -243,14 +243,17 @@ def compilefastqrecord(readlen, reference, refindex, qmodel, filename, se_class,
 				counts = [1 if i==0 else i for i in counts]
 			seq = get_trans_sequences(profile_data[0], reference)
 
-		if kwargs is 'se':
-			sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
-		elif kwargs is 'pe':
-			if fragmodel is None:
-				counts = defaultfragsize(250, 25, counts)
-			else:
-				counts = makefraglendist(fragmodel, readtot, readlen, counts, seq)
-			sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
+			if kwargs is 'se':
+				sim_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
+				output.write_fastq(filename, sim_data, single_end=True)
+
+			elif kwargs is 'pe':
+				if fragmodel is None:
+					counts = defaultfragsize(250, 25, counts)
+				else:
+					counts = makefraglendist(fragmodel, readtot, readlen, counts, seq)
+				sim_data = sequence_handling.assemble_reads(seq, counts, readlen, qmodel, se_class, kwargs)
+				output.write_fastq('rsdsv0.1', sim_data, single_end=False)
 
 	elif model == None and diff != None:
 
