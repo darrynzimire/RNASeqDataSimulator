@@ -12,7 +12,6 @@ from datetime import datetime
 from rsds import man
 
 
-
 if not sys.warnoptions:
 	warnings.simplefilter("default")  # Change the filter in this process
 	os.environ["PYTHONWARNINGS"] = "default"  # Also affect subprocesses
@@ -124,7 +123,7 @@ def main():
 		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class, 'pe', model=countModel, diff=None,  readtot=readtot, fragmodel=None)
 	elif args.pe and countModel != None and diffmodel==None and fragmodel != None:
 		print('running paired-end in empirical profile mode with FL model')
-		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class,'pe', model=None, diff=None,  readtot=readtot, fragmodel=fragmodel)
+		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class,'pe', model=countModel, diff=None,  readtot=readtot, fragmodel=fragmodel)
 	elif args.pe and countModel == None and diffmodel !=None and fragmodel ==None:
 		print('running paired-end in differential mode with no FL model')
 		process_inputFiles.compilefastqrecord(readlen, ref, ref_index, sqmodel, outfilename, se_class, 'pe', model=None, diff=diffmodel, readtot=readtot, fragmodel=None)
