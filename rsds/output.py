@@ -84,6 +84,7 @@ def add_simreads(filenames, simdata, single_end, simdata2=None):
 			for rec in simdata:
 				header = rec[0]
 				reads = rec[1]
+				print(reads)
 				qual = rec[2]
 				f1.write('{}\n{}\n+\n{}\n'.format(header, reads, qual))
 			for rec in simdata2:
@@ -105,18 +106,6 @@ def add_simreads(filenames, simdata, single_end, simdata2=None):
 				qual = rec[2]
 				f3.write('{}\n{}\n+\n{}\n'.format(header[0], reads[0], qual).encode())
 				f4.write('{}\n{}\n+\n{}\n'.format(header[1], reads[1], qual).encode())
-
-
-class Stats(dict):
-
-	def __getattr__(self, attribute):
-		return self.get(attribute)
-	__setattr__ = dict.__setitem__
-	__delattr__ = dict.__delitem__
-
-
-def collect_simstats(stats):
-	pass
 
 
 def genelist(model):
