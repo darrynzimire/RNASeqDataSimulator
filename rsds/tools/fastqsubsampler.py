@@ -5,8 +5,6 @@ import random
 import argparse
 import os
 import sys
-
-from alive_progress import alive_bar
 import time
 
 directory = './RSDSv1.0_samples'
@@ -17,9 +15,9 @@ if not os.path.isdir(directory):
 parser = argparse.ArgumentParser()
 parser.add_argument('-i1', type=str, required=True,     help="name of FASTQ file 1")
 parser.add_argument('-i2', type=str, required=False,    help="name of FASTQ file 2")
-parser.add_argument('-s',  type=int, required=False,    help="number of samples")
-parser.add_argument('-n',  type=int, required=False,    help="total amount of reads to sample")
-parser.add_argument('-l',  type=str, required=False,    help="library type: paired or single")
+parser.add_argument('-s',  type=int, required=False,    help="number of samples", default=3)
+parser.add_argument('-n',  type=int, required=False,    help="total amount of reads to sample", default=100)
+parser.add_argument('-l',  type=str, required=False,    help="library type: paired or single", default='pe')
 
 
 args = parser.parse_args()
@@ -34,9 +32,10 @@ libtype = args.l
 def generatefilename(name, zipped, n, single_end):
 
 	filenames  = []
+	file_path = os.path.join(directory, name)
 	for i in range(n):
 
-		basename = "{}_{}".format(name, 's' + str(i+1))
+		basename = "{}_{}".format(file_path, 's' + str(i+1))
 		lib_type1 = basename + "_R1.fastq" + (".gz" if zipped else "")
 		if single_end:
 			filenames.append(lib_type1)
