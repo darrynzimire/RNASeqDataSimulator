@@ -51,23 +51,25 @@ def getreadseq(outfile, rand_records, total_records,  file1, file2=None, single_
 	if single_end is True:
 
 		with gzip.open(file1) as input:
-				suba = open(outfile, 'w')
+				suba = gzip.open(outfile, 'wt')
 				rec_no = - 1
 				for r in rand_records:
+					counter += 1
 					while rec_no < r:
 						rec_no += 1
 						for i in range(4): input.readline().decode()
 					for i in range(4):
 						suba.write(input.readline().decode())
 					rec_no += 1
-					if rec_no % 10 == 0:
-						print(str((int(rec_no / total_records)) * 100) + " % done")
+					# if rec_no % 10 == 0:
+					# 	print(str((int(rec_no / total_records)) * 100) + " % done")
 
 	elif single_end is False and file2 is not None:
 		with gzip.open(file1) as fha, gzip.open(file2) as fhb:
-			suba, subb = open(outfile[0], 'w'), open(outfile[1], 'w')
+			suba, subb = gzip.open(outfile[0], 'wt'), gzip.open(outfile[1], 'wt')
 			rec_no = - 1
 			for rr in rand_records:
+
 				while rec_no < rr:
 					rec_no += 1
 					for i in range(4): fha.readline().decode()
@@ -84,25 +86,26 @@ def write_records(single_end):
 
 	records = sum(1 for _ in gzip.open(f1, 'rb')) // 4
 	print("sampling " + str(number) + " out of " + str(records) + " records")
-
+	counter = 0
 	if single_end:
 
 		output_files = generatefilename(name='rsds_v1.0', zipped=True, n=samples, single_end=True)
 		for i, f in zip((range(samples)), output_files):
 			rand_records = tuple(sorted(set(random.sample(range(records + 1), number))))
 			rr = {f: rand_records}
+			counter =+ 1
 			for key, value in rr.items():
 				getreadseq(key, value, records, f1, f2, single_end=True)
+
 	elif not single_end:
-		counter = 0
+
 		output_files = generatefilename(name='rsds_v1.0', zipped=True, n=samples, single_end=False)
 		for i, f in zip((range(samples)), output_files):
 			rand_records = tuple(sorted(set(random.sample(range(records + 1), number))))
 			rr = {f: rand_records}
+			counter +=1
 			for key, value in rr.items():
 				getreadseq(key, value, records, f1, f2, single_end=False)
-				counter += 1
-		print(counter)
 
 
 def main():
