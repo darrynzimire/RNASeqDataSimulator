@@ -175,7 +175,7 @@ def get_trans_sequences(transcript_offsets, reference):
 
 def diffmode(model, reference, readtot):
 
-	with open(model, 'rb') as file:
+	with gzip.open(model, 'rb') as file:
 		profile = pickle.load(file)
 
 		background = process_models(profile[0].tolist())
