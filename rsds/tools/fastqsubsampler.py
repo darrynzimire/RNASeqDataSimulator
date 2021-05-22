@@ -27,7 +27,7 @@ f2 = args.i2
 samples = args.s
 number = args.n
 libtype = args.l
-
+fname = os.path.basename(f1).split('.f')[0]
 
 def generatefilename(name, zipped, n, single_end):
 
@@ -89,7 +89,7 @@ def write_records(single_end):
 	counter = 0
 	if single_end:
 
-		output_files = generatefilename(name='rsds_v1.0', zipped=True, n=samples, single_end=True)
+		output_files = generatefilename(name=fname, zipped=True, n=samples, single_end=True)
 		for i, f in zip((range(samples)), output_files):
 			rand_records = tuple(sorted(set(random.sample(range(records + 1), number))))
 			rr = {f: rand_records}
@@ -99,7 +99,7 @@ def write_records(single_end):
 
 	elif not single_end:
 
-		output_files = generatefilename(name='rsds_v1.0', zipped=True, n=samples, single_end=False)
+		output_files = generatefilename(name=fname, zipped=True, n=samples, single_end=False)
 		for i, f in zip((range(samples)), output_files):
 			rand_records = tuple(sorted(set(random.sample(range(records + 1), number))))
 			rr = {f: rand_records}
