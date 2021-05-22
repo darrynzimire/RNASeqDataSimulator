@@ -92,7 +92,22 @@ def manpage():
 		  '--quant                   expression level class for genes\n'
 		  '--fold_changes            fold_changes (min, max, increment)\n'  
 		  '--output                  output file name\n'
-
+	    
+	  "\n"
+     'program: rsds-subsample:\n'
+	      '\n'
+	 'This program randomly subsample reads from a FASTQ file or set of paired-end FASTQ files.\n'
+	 '\n'
+	 'usage: rsds-subsample <options> <file>\n'
+	      '\n'
+	 'options:\n'
+	      '\n'
+	      '-f1                       input FASTQ file.qz\n'
+	      '-f2                       input FASTQ file2 if paired-end\n'
+	      '-s                        number of samples\n'
+	      '-n                        number of reads to sample\n'
+	      '-l                        library-type: se or pe\n'
+	      '\n'
 		)
 
 
