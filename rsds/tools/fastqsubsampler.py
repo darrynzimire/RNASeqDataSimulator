@@ -51,7 +51,7 @@ def getreadseq(outfile, rand_records, total_records,  file1, file2=None, single_
 	if single_end is True:
 
 		with gzip.open(file1) as input:
-				suba = open(outfile, 'w')
+				suba = gzip.open(outfile, 'wt')
 				rec_no = - 1
 				for r in rand_records:
 					while rec_no < r:
@@ -65,7 +65,7 @@ def getreadseq(outfile, rand_records, total_records,  file1, file2=None, single_
 
 	elif single_end is False and file2 is not None:
 		with gzip.open(file1) as fha, gzip.open(file2) as fhb:
-			suba, subb = open(outfile[0], 'w'), open(outfile[1], 'w')
+			suba, subb = gzip.open(outfile[0], 'wt'), gzip.open(outfile[1], 'wt')
 			rec_no = - 1
 			for rr in rand_records:
 				while rec_no < rr:
