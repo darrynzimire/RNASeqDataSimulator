@@ -44,7 +44,7 @@ def process_readcounts(count_table):
 	# What is the relationship between the zero-values and the values close to zero?
 	# How many of the zero values do we want change with respect to the SD?
 
-	df_count_table = pd.read_csv(count_table)
+	df_count_table = pd.read_csv(count_table, sep='\t)
 	df1 = df_count_table[df_count_table.IsoPct != 0]
 	df1.drop(df1.index)
 	read_counts = df1['expected_count'].tolist()
