@@ -237,7 +237,7 @@ def compilefastqrecord(readlen, reference, refindex, qmodel, filename, se_class,
 			profile = pickle.load(file)
 			profile_data = process_models(profile)
 			if readtot==None:
-				counts = profile[1]
+				counts = profile_data[1]
 			else:
 				counts = np.rint(np.multiply(profile_data[2], readtot)).astype(int)
 				counts = [1 if i==0 else i for i in counts]
