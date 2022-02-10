@@ -1,3 +1,4 @@
+![image description](darrynzimire/RNASeqDataSimulator/blob/master/docs/RSDS_logo.png)
 # RSDS: A simulator for raw RNA-sequencing data 
 
 The RNA-seq data simulator (RSDS) is a command-line interface implemented in Python 3. The tool simulates raw RNA-sequencing data by emulating characteristics of real RNA-seq data. Parameters to control the properties of the simulated data are available as tuneable settings such as fragment-length distribution, customized Phred-quality score modelling, customized transcript expression profiling, as well as the simulation of paired-end and single-end data. 
